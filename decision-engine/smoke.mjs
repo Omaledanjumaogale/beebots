@@ -1,0 +1,4 @@
+import{Laya}from'@receptron/laya';import{readFile,writeFile}from'node:fs/promises';import{questions,compactState,gateResult}from'./policy.mjs';
+const installed=JSON.parse(await readFile('artifacts/installed-model.json','utf8'));
+if(!process.env.OMIE_LAYA_INPUT)throw Error('Set OMIE_LAYA_INPUT to an existing chronological closed-bar JSON export. No synthetic market performance is generated.');
+const input=JSON.parse(await readFile(process.env.OMIE_LAYA_INPUT,'utf8'));const state=compactState(input);const model=await Laya.load({modelDir:installed.dir,sessionOptions:{intraOpNumThreads:1,interOpNumThreads:1}});try{const start=performance.now();const raw=await model.systemOne(state,questions);const decision=gateResult(raw,state);await writeFile('artifacts/latest-decision.json',JSON.stringify({...decision,model:installed.revision,latencyMs:performance.now()-start,at:new Date().toISOString()},null,2));console.log(JSON.stringify(decision));}finally{await model.close();}

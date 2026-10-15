@@ -2,7 +2,7 @@ name: OmieBot validation
 on:
   push:
     branches: [main, 'codex/**']
-    paths: ['web/**', 'edge/**', 'research-engine/**', '.github/workflows/omiebot.yml']
+    paths: ['web/**', 'edge/**', 'decision-engine/**', 'research-engine/**', '.github/workflows/omiebot.yml']
   pull_request:
 permissions:
   contents: read
@@ -37,6 +37,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npx vitest run --config edge/vitest.config.js
       - run: node edge/check.mjs
+      - run: node --test decision-engine/test/*.test.mjs
   research:
     runs-on: ubuntu-latest
     steps:

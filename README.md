@@ -25,3 +25,9 @@ See `docs/PRODUCTION.md` for schedules, costs, integration limits and acceptance
 From `web`: `npm run check`, `npm test`, `npm run build`. From repository root: `node edge/check.mjs`, `node web/node_modules/vitest/vitest.mjs run --config edge/vitest.config.js`, and `python -m unittest discover -s research-engine -v`.
 
 The upstream MIT license is retained. OmieBot is an independently branded extension; third-party notices live in `web/THIRD-PARTY-NOTICES.md`.
+
+## Investor simulation and Laya
+
+`/invest` provides private fictitious wallets, bounded individual allocations, squad/pool interests, simulated redemption requests and a wallet journal. No real funds, escrow, pooling or payouts are connected. See `docs/INVESTMENT-STRUCTURE-DRAFT.md`. The proposed10%fee applies on principal withdrawal; numeric ROI targets remain unset pending evidence.
+
+`decision-engine/` installs the pinned Laya ONNX model, verifies artifacts and runs guarded typed action/coaching inference. A local actual-candle smoke inference succeeded. Weight fine-tuning and production inference hosting remain pending; this Node native model does not run in the Cloudflare isolate. See its README.

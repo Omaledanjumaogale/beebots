@@ -12,6 +12,9 @@ import type * as admin from "../admin.js";
 import type * as adminSchema from "../adminSchema.js";
 import type * as crons from "../crons.js";
 import type * as hive from "../hive.js";
+import type * as investmentMath from "../investmentMath.js";
+import type * as investmentSchema from "../investmentSchema.js";
+import type * as investments from "../investments.js";
 import type * as market from "../market.js";
 import type * as risk from "../risk.js";
 
@@ -26,6 +29,9 @@ declare const fullApi: ApiFromModules<{
   adminSchema: typeof adminSchema;
   crons: typeof crons;
   hive: typeof hive;
+  investmentMath: typeof investmentMath;
+  investmentSchema: typeof investmentSchema;
+  investments: typeof investments;
   market: typeof market;
   risk: typeof risk;
 }>;

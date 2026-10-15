@@ -1,7 +1,8 @@
 import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
 import {adminTables} from './adminSchema';
-export default defineSchema({ ...adminTables,
+import {investmentTables} from './investmentSchema';
+export default defineSchema({ ...adminTables,...investmentTables,
   portfolios: defineTable({ owner: v.string(), cash: v.number(), killed: v.boolean(), createdAt: v.number() }).index('owner', ['owner']),
   bees: defineTable({ owner: v.string(), name: v.string(), strategy: v.string(), symbol: v.string(), active: v.boolean(), quantity: v.number(), lastDecision: v.optional(v.string()) }).index('owner', ['owner']).index('active', ['active']).index('active_symbol', ['active','symbol']),
   quotes: defineTable({ symbol: v.string(), bid: v.number(), ask: v.number(), sourceAt: v.number(), receivedAt: v.number(), source: v.string() }).index('symbol', ['symbol']),
