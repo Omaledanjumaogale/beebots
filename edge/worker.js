@@ -10,6 +10,7 @@ export class HiveControl {
       const config=await this.state.storage.get('config')||defaults();
       config.bees=bees().map(b=>({...b,enabled:config.bees?.find(old=>old.id===b.id)?.enabled??false}));
       if(action==='cycleEvidence'){await this.state.storage.put('lastCycle',data.result);return json({ok:true});}
+      if(action==='providerBackoff'){await this.state.storage.put(`backoff:${data.provider}`,Date.now()+(data.status===429?900000:60000));return json({ok:true});}
       if(action==='providerPolicy')return json(config.providers[data.provider]||{enabled:false,retentionAllowed:false});
       if(action==='storageStatus')return json({usedBytes:(await this.state.storage.get('artifactBudget'))?.bytes||0,capBytes:8000000000,maxObjects:10000,scope:'Dedicated runtime bucket only; excludes other account services'});
       if(action==='storageReserve'){
@@ -96,17 +97,17 @@ export class HiveControl {
             const notional=side==='buy'?Math.min(25,account.cash/(1+feeRate)):account.quantity*price,fee=notional*feeRate;
             if(side==='buy'){account.quantity=notional/price;account.entry=price;account.cash-=notional+fee;}
             else{account.cash+=notional-fee;account.quantity=0;account.entry=0;}
-            account.trades++;account.dayTrades++;
+            account.trades++;account.dayTrades++;account.fees=(account.fees||0)+fee;
             events.push({id:`${bee.id}-${current.time}`,bee:bee.id,symbol:data.symbol,side,price,notional,fee,at:now,mode:'simulation',source:data.provider});
           }
-          account.mark=current.close;account.equity=account.cash+account.quantity*current.close;account.pnl=account.equity-account.initialCash;paper[key]=account;
+          account.mark=current.close;account.equity=account.cash+account.quantity*current.close;account.pnl=account.equity-account.initialCash;account.history=[...(account.history||[]),{at:current.time,equity:account.equity}].slice(-288);account.decisions=[...(account.decisions||[]),account.lastDecision].slice(-24);account.fills=[...(account.fills||[]),...events.filter(e=>e.bee===bee.id)].slice(-24);paper[key]=account;
         }
         await this.state.storage.put('paper',paper);return json({events,paper});
       }
       if(action==='reserve'){
         const policy=PROVIDERS[data.provider];
         if(!policy||!config.providers[data.provider]?.enabled)return json({error:'Provider disabled pending entitlement confirmation'},403);
-        const usage=await this.state.storage.get('usage')||{}, now=Date.now(), windows=buckets(now);
+        const usage=await this.state.storage.get('usage')||{}, now=Date.now(), windows=buckets(now);const until=await this.state.storage.get(`backoff:${data.provider}`)||0;if(until>now)return json({error:'Provider cooldown after upstream throttling; abstain',retryAt:until},429);
         const entry=usage[data.provider]||{bytes:[]};
         for(const period of ['minute','day','month']){
           if(entry[period]?.window!==windows[period])entry[period]={window:windows[period],count:0};
@@ -208,7 +209,7 @@ async function market(env,p,e,s,bar='5m'){
   if(p==='twelvedata'&&e==='time_series'){url.searchParams.set('interval','5min');url.searchParams.set('outputsize','100');}
   try{
     const r=await fetch(url,{signal:AbortSignal.timeout(10000)});
-    if(!r.ok)return json({error:'Provider unavailable; abstain',status:r.status},503);
+    if(!r.ok){await control(env,{action:'providerBackoff',provider:p,status:r.status});return json({error:'Provider unavailable; abstain',status:r.status},503);}
     const text=await r.text();if(new TextEncoder().encode(text).length>1024*1024)return json({error:'Response exceeds reserved byte budget'},503);
     const data=JSON.parse(text);if(data.error||data.status==='error'||data.Note||data.Information||(p==='okx'&&data.code!=='0'))return json({error:'Provider rejected query; abstain'},503);
     const value={provider:p,symbol:s,endpoint:e,fetchedAt:Date.now(),data};
