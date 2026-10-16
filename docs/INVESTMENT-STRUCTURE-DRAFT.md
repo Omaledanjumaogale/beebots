@@ -34,3 +34,9 @@ Nigeria SEC public notice8May2026: https://sec.gov.ng/for-investors/keep-track-o
 ISA2025 collective investment sections150–152: https://home.sec.gov.ng/documents/1326/INVESTMENT-AND-SECURITIES-ACT-NIGERIA-2025_1.pdf
 Laya runtime: https://github.com/receptron/laya
 Laya model limitations: https://huggingface.co/convaiinnovations/laya
+
+## Product terminology update —16October2026
+
+Trading Pool: multiple participants combine trading capital, sharing realized net profit and losses according to eligible participatory stake. Trading Squad: two or more participants agree a term and recurring distribution interval. Single-Folder Trading: separately accounted individual capital. Users may organize their own group, opt into platform suggestions or request pairing. No matching may enroll participants or allocate money without each participant approving the group mandate.
+
+The simulation persists optional pairing preference, proposed30/60/90day term and7/14/30day distribution cadence. These do not create a real group, enforce a live lock, guarantee distributions or authorize managed trading. Existing records retain their internal individual/squad/pool IDs. Legal classification depends on actual activity rather than branding.
