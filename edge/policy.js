@@ -1,4 +1,5 @@
 export const PROVIDERS = {
+  alpaca: {minute:6,day:3000,endpoints:['bars','quotes'],base:'https://data.alpaca.markets/v1beta3/crypto/us/'},
   okx: { minute: 6, day: 3000, endpoints: ['candles','ticker','tickers'], base: 'https://www.okx.com/api/v5/market/' },
   twelvedata: { key: 'TWELVEDATA_API_KEY', minute: 8, day: 800, endpoints: ['price', 'time_series'], base: 'https://api.twelvedata.com/' },
   alphavantage: { key: 'ALPHAVANTAGE_API_KEY', minute: 1, day: 25, endpoints: ['TIME_SERIES_DAILY'], base: 'https://www.alphavantage.co/query' },

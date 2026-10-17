@@ -1,5 +1,8 @@
 import {PROVIDERS,bees,buckets,marketOpen,validateMarket} from './policy.js';
 import {trainCandidate} from './training.js';
+import {PAPER_ID,DATA_KEY,SYMBOL,paperCycle,marketSnapshot} from './workspaces.js';
+import {okxLiveAccount} from './okx.js';
+import {brokerLink} from './broker-vault.js';
 const json=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store'}});
 const defaults=()=>({mode:'paper',paused:true,feeds:[],providers:{},bees:bees(),maxOrderUsd:25});
 export class HiveControl {
@@ -8,6 +11,18 @@ export class HiveControl {
     return this.state.blockConcurrencyWhile(async()=>{
       const {action,...data}=await request.json();
       const config=await this.state.storage.get('config')||defaults();
+      if(action==='brokerLink'){
+        const input=data.input;if(typeof input?.user!=='string'||input.user.length>200)return json({error:'Verified profile required'},400);
+        const ownerHash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(input.user)))].map(n=>n.toString(16).padStart(2,'0')).join('');
+        const cacheKey=`broker-status:${ownerHash}`,now=Date.now();
+        if(input.operation==='status'){const cache=await this.state.storage.get(cacheKey);if(cache&&now-cache.at<15000)return json(cache.result);}
+        else{
+          const rateKey=`rate:${ownerHash}`,previous=await this.state.storage.get(rateKey),rate=!previous||previous.resetAt<=now?{count:0,resetAt:now+900000}:previous;
+          if(rate.count>=5)return json({error:'Connection attempt limit reached; wait 15 minutes'},429);
+          rate.count++;await this.state.storage.put(rateKey,rate);if(this.state.storage.setAlarm)await this.state.storage.setAlarm(now+900000);
+        }
+        try{const result=await brokerLink(this.env,input,artifactPut);await this.state.storage.put(cacheKey,{at:now,result});return json(result);}catch(e){return json({error:e instanceof Error?e.message:'Broker connection failed'},400);}
+      }
       config.bees=bees().map(b=>({...b,enabled:config.bees?.find(old=>old.id===b.id)?.enabled??false}));
       if(action==='cycleEvidence'){await this.state.storage.put('lastCycle',data.result);return json({ok:true});}
       if(action==='providerBackoff'){await this.state.storage.put(`backoff:${data.provider}`,Date.now()+(data.status===429?900000:60000));return json({ok:true});}
@@ -24,13 +39,18 @@ export class HiveControl {
       }
       if(action==='train'){
         if(!bees().some(b=>b.id===data.bee&&b.executable))return json({error:'Unknown executable bee'},400);
-        const dataset=await this.env.ARTIFACTS.get(`datasets/${data.bee}.json`);if(!dataset){const report={status:'awaiting-data',at:new Date().toISOString(),reason:'No retained dataset; no provider requests made'};await artifactPut(this.env,`training/${data.bee}/latest.json`,JSON.stringify(report));return json(report);}
+        const namespace=data.workspace===PAPER_ID?`${PAPER_ID}/`:'';
+        const dataset=await this.env.ARTIFACTS.get(namespace?DATA_KEY:`datasets/${data.bee}.json`);if(!dataset){const report={status:'awaiting-data',at:new Date().toISOString(),reason:'No retained dataset; no provider requests made'};await artifactPut(this.env,`training/${namespace}${data.bee}/latest.json`,JSON.stringify(report));return json(report);}
         const raw=await dataset.json();
         if(!Array.isArray(raw)||raw.some(b=>!Number.isFinite(b.time)||b.time>Date.now()-300000))return json({status:'skipped',reason:'Unclosed or invalid data'},400);
         const bars=raw.slice(-2000),previous=await this.env.ARTIFACTS.get(`models/${data.bee}/challenger.json`);
         const result=trainCandidate(bars,previous?await previous.json():null);
-        await artifactPut(this.env,`training/${data.bee}/latest.json`,JSON.stringify({...result,at:new Date().toISOString(),compute:'isolated-durable-object',maxSamples:2000,epochs:10}));
-        if(result.status==='shadow-ready')await artifactPut(this.env,`models/${data.bee}/challenger.json`,JSON.stringify(result.candidate));
+        const at=new Date().toISOString();
+        const datasetSha256=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(bars))))].map(n=>n.toString(16).padStart(2,'0')).join('');
+        const report={...result,at,compute:'isolated-durable-object',maxSamples:2000,epochs:10,workspace:namespace?PAPER_ID:'legacy-okx',samples:bars.length,firstBar:bars[0]?.time,lastBar:bars.at(-1)?.time,datasetSha256,executionApproved:false};
+        await artifactPut(this.env,`training/${namespace}${data.bee}/${at.replaceAll(':','-')}.json`,JSON.stringify(report));
+        await artifactPut(this.env,`training/${namespace}${data.bee}/latest.json`,JSON.stringify(report));
+        if(result.status==='shadow-ready'&&!namespace)await artifactPut(this.env,`models/${data.bee}/challenger.json`,JSON.stringify(result.candidate));
         return json({status:result.status});
       }
       if(action==='rate'){
@@ -66,7 +86,7 @@ export class HiveControl {
       if(action==='tick'){
         if(config.paused)return json({events:[]});
         const bars=data.bars,now=Date.now();
-        if(!Array.isArray(bars)||bars.length<25||bars.some(b=>!Number.isFinite(b.close)||b.close<=0||!Number.isFinite(b.time))||now-bars.at(-1).time>900000||bars.at(-1).time>now-300000)return json({error:'Stale, unclosed or insufficient data; abstain'},409);
+        if(!Array.isArray(bars)||bars.length<25||bars.some((b,i)=>!Number.isFinite(b.close)||b.close<=0||!Number.isFinite(b.time)||(i>0&&b.time-bars[i-1].time!==300000))||now-bars.at(-1).time>900000||bars.at(-1).time>now-300000)return json({error:'Stale, unclosed, gapped or insufficient data; abstain'},409);
         const paper=await this.state.storage.get('paper')||{},events=[];
         for(const bee of config.bees.filter(b=>b.executable&&b.enabled)){
           const index=bees().findIndex(b=>b.id===bee.id);
@@ -80,6 +100,15 @@ export class HiveControl {
             const linear=model.weights[0]+returns.reduce((s,v,j)=>s+model.weights[j+1]*(v-model.mean[j])/model.sd[j],0);
             probability=1/(1+Math.exp(-Math.max(-30,Math.min(30,linear))));
           }
+          // Score only a prior, already-recorded forecast against the next observed closed bar.
+          const forecast=account.shadowForecast;
+          if(forecast&&forecast.time+300000===current.time&&Number.isFinite(forecast.probability)){
+            const forward=account.forwardShadow||{samples:0,brierSum:0,longEntries:0,netReturnProxy:0};
+            const outcome=Number(current.close>forecast.close);forward.samples++;forward.brierSum+=(forecast.probability-outcome)**2;
+            if(forecast.probability>.6){forward.longEntries++;forward.netReturnProxy+=current.close/forecast.close-1-.004;}
+            forward.lastAt=now;forward.scope='one-bar close-to-close shadow proxy; models may be updated; no promotion';account.forwardShadow=forward;
+          }
+          account.shadowForecast=probability===null?null:{time:current.time,close:current.close,probability,version:model?.version??'unknown'};
           const recent=bars.slice(-21,-1).map(b=>b.close),mean=recent.reduce((a,b)=>a+b,0)/recent.length;
           const volatility=Math.sqrt(recent.reduce((s,v)=>s+(v-mean)**2,0)/recent.length)||1;
           const z=(current.close-mean)/volatility;
@@ -249,6 +278,27 @@ export default {
   async fetch(request,env){
     const url=new URL(request.url);if(url.pathname==='/health')return json({service:'OmieBot runtime',mode:'paper',liveReady:false});
     if(!env.EDGE_SERVICE_SECRET||request.headers.get('Authorization')!==`Bearer ${env.EDGE_SERVICE_SECRET}`)return json({error:'Unauthorized'},401);
+    if(url.pathname==='/workspaces/live')return json(await okxLiveAccount(env));
+    if(url.pathname==='/workspaces/okx'&&request.method==='POST'){
+      const text=await request.text();if(text.length>4000)return json({error:'Connection request too large'},413);
+      let input;try{input=JSON.parse(text);}catch{return json({error:'Invalid connection request'},400);}
+      return control(env,{input,action:'brokerLink'},'okx-owner-registry');
+    }
+    if(url.pathname==='/workspaces/markets'){try{return json(await marketSnapshot(env,control,artifactPut));}catch(e){return json({error:e instanceof Error?e.message:'Markets unavailable',at:Date.now()},503);}}
+    if(url.pathname==='/workspaces/paper'){
+      const status=await(await control(env,{action:'status'},PAPER_ID)).json();
+      const manifest=await env.ARTIFACTS.get(`datasets/${PAPER_ID}/manifest.json`);
+      return json({...status,workspace:PAPER_ID,symbol:SYMBOL,dataset:manifest?await manifest.json():null,training:await workspaceTraining(env),capitalKind:'simulated',mode:'paper'});
+    }
+    if(url.pathname==='/admin/paper/start'&&request.method==='POST'){
+      await control(env,{action:'configure',paused:false,maxOrderUsd:25,providers:{alpaca:{enabled:true,retentionAllowed:true,redistributionAllowed:false}},bees:bees().filter(b=>b.executable).map(b=>({id:b.id,enabled:true}))},PAPER_ID);
+      return json(await paperCycle(env,control,artifactPut,{bootstrap:true}));
+    }
+    if(url.pathname==='/admin/paper/pause'&&request.method==='POST')return control(env,{action:'configure',paused:true},PAPER_ID);
+    if(url.pathname==='/admin/paper/cycle'&&request.method==='POST')return json(await paperCycle(env,control,artifactPut));
+    if(url.pathname==='/admin/paper/train'&&request.method==='POST'){
+      const results=[];for(const bee of bees().filter(b=>b.executable)){const r=await control(env,{action:'train',bee:bee.id,workspace:PAPER_ID},`training:${PAPER_ID}:${bee.id}`);results.push({bee:bee.id,status:r.status,result:await r.json()});}return json({results});
+    }
     if(url.pathname==='/admin/cycle'&&request.method==='POST')return json(await runPaperCycle(env));
     if(url.pathname==='/admin/status'){
       const status=await(await control(env,{action:'status'})).json();
@@ -267,6 +317,7 @@ export default {
       return json({bee:input.bee,samples:bars.length,trainingAt:'04:00 Africa/Lagos',status:bars.length>=1200?'eligible':'insufficient-data'});
     }
     if(url.pathname==='/admin/training'){
+      const current=await workspaceTraining(env);if(current.results.some(r=>r.result.status!=='awaiting-data'))return json(current);
       const results=[];
       for(const bee of bees().filter(b=>b.executable)){
         const artifact=await env.ARTIFACTS.get(`training/${bee.id}/latest.json`);
@@ -288,9 +339,14 @@ export default {
         // Only owner-imported closed bars. This path never calls market/LLM providers.
         for(const bee of bees().filter(b=>b.executable)){
           await control(env,{action:'train',bee:bee.id},`training:${bee.id}`);
+          await control(env,{action:'train',bee:bee.id,workspace:PAPER_ID},`training:${PAPER_ID}:${bee.id}`);
         }
       })());return;
     }
-    ctx.waitUntil(runPaperCycle(env));
+    ctx.waitUntil(Promise.all([runPaperCycle(env),paperCycle(env,control,artifactPut)]));
   }
 };
+async function workspaceTraining(env){
+  const results=[];for(const bee of bees().filter(b=>b.executable)){const artifact=await env.ARTIFACTS.get(`training/${PAPER_ID}/${bee.id}/latest.json`);const value=artifact?await artifact.json():{status:'awaiting-data'};const {candidate,...result}=value;results.push({bee:bee.id,result});}
+  return {results,cron:'0 3 * * *',timezone:'Africa/Lagos',mode:'paper-challengers',workspace:PAPER_ID};
+}

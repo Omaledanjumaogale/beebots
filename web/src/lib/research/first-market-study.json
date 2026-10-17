@@ -1,0 +1,67 @@
+{
+  "state": "research-only",
+  "execution_approved": false,
+  "automatic_activation": false,
+  "trial_count": 5,
+  "selected_candidate": "breaker",
+  "split": {
+    "train_samples": 1074,
+    "train_last_label_index": 1096,
+    "validation_first_index": 1097,
+    "validation_last_label_index": 1455,
+    "holdout_first_index": 1456,
+    "holdout_samples": 360
+  },
+  "final_holdout": [
+    {
+      "net_return_proxy": -0.014170932254550572,
+      "trade_close_drawdown_proxy": 0.018301339239416903,
+      "entries": 8,
+      "opportunities": 120,
+      "abstention_fraction": 0.9333333333333333,
+      "net_win_fraction": 0.125,
+      "round_trip_cost_bps": 20,
+      "buy_hold_return_proxy": -0.010597317243977278,
+      "buy_hold_close_drawdown_proxy": 0.02411487670328527
+    },
+    {
+      "net_return_proxy": -0.029862039065163826,
+      "trade_close_drawdown_proxy": 0.0319988128131673,
+      "entries": 8,
+      "opportunities": 120,
+      "abstention_fraction": 0.9333333333333333,
+      "net_win_fraction": 0.125,
+      "round_trip_cost_bps": 40,
+      "buy_hold_return_proxy": -0.012577112011180724,
+      "buy_hold_close_drawdown_proxy": 0.02411487670328527
+    },
+    {
+      "net_return_proxy": -0.060589974823042625,
+      "trade_close_drawdown_proxy": 0.060589974823042625,
+      "entries": 8,
+      "opportunities": 120,
+      "abstention_fraction": 0.9333333333333333,
+      "net_win_fraction": 0.0,
+      "round_trip_cost_bps": 80,
+      "buy_hold_return_proxy": -0.01653075323882569,
+      "buy_hold_close_drawdown_proxy": 0.02411487670328505
+    }
+  ],
+  "limitations": [
+    "These deterministic research baselines are not the production execution strategies.",
+    "Next-open entry/horizon-close exit proxy excludes intrabar drawdown, depth, funding and latency.",
+    "Trade-close drawdown understates possible intratrade losses.",
+    "Holdout is consumed by this report. Repeated dataset experiments require a new untouched release holdout.",
+    "No profitability promise; no Laya weight training; no broker requests."
+  ],
+  "manifest": {
+    "created_at_utc": "2026-10-17T13:42:52.190319+00:00",
+    "dataset_sha256": "81938d7d3459d5ca7f244fb9460a6f3ecb4413c6eaacc472345c4d19e2ac0da8",
+    "tournament_code_sha256": "8c75f27ab04cdd9ddb86f025031bc161557891b9a69708a1f5836e26bce9c156",
+    "research_code_sha256": "70d6ff78c15788c8a28ca44b4e56ac2d1906e8927a0a465001f4a491eda2949b",
+    "source": "Authenticated Alpaca US BTC/USD 5-minute observations; latest contiguous segment, 17 October 2026",
+    "bars": 1819,
+    "first_timestamp_ms": 1791698400000,
+    "last_timestamp_ms": 1792243800000
+  }
+}

@@ -1,6 +1,6 @@
 # OmieBot AI Trading
 
-A research and paper-trading workspace built with SvelteKit, Tailwind CSS, Convex and Cloudflare. Production: https://omiebot.ewinproject.org. Operations: https://omiebot.ewinproject.org/admin.
+A research and paper-trading application with a separate OKX live-account connection workspace, built with SvelteKit, Tailwind CSS, Convex and Cloudflare. Production: https://omiebot.ewinproject.org. Operations: https://omiebot.ewinproject.org/admin. Paper: `/paper`; live account records: `/live`; encrypted account linking: `/connect/okx`. Actual OKX order execution remains incomplete and disabled.
 
 ## Run the web application
 
@@ -18,7 +18,7 @@ Twenty specialist Bees are registered. Drift, Rebound and Breaker have executabl
 
 ## Production operation
 
-See `docs/PRODUCTION.md` for schedules, costs, integration limits and acceptance status. The live-mode control remains locked while only Alpaca paper credentials are configured. An API key does not establish paid entitlements, data licenses or unlimited usage. Provider limits are shared outside this app; local counters cannot observe unrelated clients.
+See `docs/PRODUCTION.md` and `docs/WORKSPACES-LIVE-PAPER.md` for schedules, costs, integration limits and acceptance status. The Alpaca-backed shared paper fleet evaluates actual closed BTC/USD bars every five minutes and fits retained-data shadow candidates daily at 04:00 Africa/Lagos. The first actual 1,819-bar fitting jobs were rejected and the first market tournament lost money; neither was promoted. `/live` reads only the signed-in profile's linked OKX records, with no fallback to paper balances. Connection verification, encrypted storage and recorded starting risk limits are implemented; actual live order submission and execution acceptance remain unfinished. An API key does not establish paid entitlements, data licenses or unlimited usage. Provider limits are shared outside this app; local counters cannot observe unrelated clients.
 
 ## Validation
 
