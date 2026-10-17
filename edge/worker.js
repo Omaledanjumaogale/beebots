@@ -3,6 +3,7 @@ import {trainCandidate} from './training.js';
 import {PAPER_ID,DATA_KEY,SYMBOL,paperCycle,marketSnapshot} from './workspaces.js';
 import {okxLiveAccount} from './okx.js';
 import {brokerLink} from './broker-vault.js';
+import {dataPlane,retryPublications,publicPaper,hash} from './data-plane.js';
 const json=(body,status=200)=>Response.json(body,{status,headers:{'Cache-Control':'no-store'}});
 const defaults=()=>({mode:'paper',paused:true,feeds:[],providers:{},bees:bees(),maxOrderUsd:25});
 export class HiveControl {
@@ -11,6 +12,9 @@ export class HiveControl {
     return this.state.blockConcurrencyWhile(async()=>{
       const {action,...data}=await request.json();
       const config=await this.state.storage.get('config')||defaults();
+      if(action==='dataPlane'){try{return json(await dataPlane(this.state,this.env,data.input,artifactPut));}catch(e){return json({error:e instanceof Error?e.message:'Data plane unavailable'},503);}}
+      if(action==='retryPublications')return json(await retryPublications(this.state,this.env,artifactPut));
+      if(action==='publicationStatus')return json({pending:(await this.state.storage.list({prefix:'bulk-retry:',limit:26})).size});
       if(action==='brokerLink'){
         const input=data.input;if(typeof input?.user!=='string'||input.user.length>200)return json({error:'Verified profile required'},400);
         const ownerHash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(input.user)))].map(n=>n.toString(16).padStart(2,'0')).join('');
@@ -43,7 +47,10 @@ export class HiveControl {
         const dataset=await this.env.ARTIFACTS.get(namespace?DATA_KEY:`datasets/${data.bee}.json`);if(!dataset){const report={status:'awaiting-data',at:new Date().toISOString(),reason:'No retained dataset; no provider requests made'};await artifactPut(this.env,`training/${namespace}${data.bee}/latest.json`,JSON.stringify(report));return json(report);}
         const raw=await dataset.json();
         if(!Array.isArray(raw)||raw.some(b=>!Number.isFinite(b.time)||b.time>Date.now()-300000))return json({status:'skipped',reason:'Unclosed or invalid data'},400);
-        const bars=raw.slice(-2000),previous=await this.env.ARTIFACTS.get(`models/${data.bee}/challenger.json`);
+        const priorReport=await this.env.ARTIFACTS.get(`training/${namespace}${data.bee}/latest.json`);
+          const currentHash=await hash(JSON.stringify(raw.slice(-2000)));
+          if(priorReport){const prior=await priorReport.json();if(prior.datasetSha256===currentHash)return json({status:prior.status,unchanged:true,r2Replacements:0});}
+          const bars=raw.slice(-2000),previous=await this.env.ARTIFACTS.get(`models/${data.bee}/challenger.json`);
         const result=trainCandidate(bars,previous?await previous.json():null);
         const at=new Date().toISOString();
         const datasetSha256=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(bars))))].map(n=>n.toString(16).padStart(2,'0')).join('');
@@ -73,7 +80,7 @@ export class HiveControl {
         if(data.providers){for(const [id,p]of Object.entries(data.providers)){
           if(!PROVIDERS[id]||Object.keys(p).some(k=>!['enabled','retentionAllowed','redistributionAllowed'].includes(k))||Object.values(p).some(v=>typeof v!=='boolean'))return json({error:'Invalid provider permissions'},400);
         }}
-        if(data.maxOrderUsd!==undefined&&(!Number.isFinite(data.maxOrderUsd)||data.maxOrderUsd<=0||data.maxOrderUsd>100))return json({error:'Order cap must be 0–100 USD'},400);
+        if(data.maxOrderUsd!==undefined&&(!Number.isFinite(data.maxOrderUsd)||data.maxOrderUsd<=0||data.maxOrderUsd>100))return json({error:'Order cap must be 0â€“100 USD'},400);
         if(data.bees!==undefined){
           if(!Array.isArray(data.bees)||data.bees.some(b=>!config.bees.some(existing=>existing.id===b.id&&existing.executable)||typeof b.enabled!=='boolean'))return json({error:'Only executable baseline bees can be activated'},400);
           config.bees=config.bees.map(b=>({...b,enabled:data.bees.find(c=>c.id===b.id)?.enabled??b.enabled}));
@@ -195,20 +202,24 @@ export class HiveControl {
       return json({error:'Unsupported action'},400);
     });
   }
-  async alarm(){
+  async alarm(){return this.state.blockConcurrencyWhile(async()=>{
+    const publicationRetries=await retryPublications(this.state,this.env,artifactPut);
     const cursor=await this.state.storage.get('rateCleanupCursor');
     const entries=await this.state.storage.list({prefix:'rate:',limit:1000,...(cursor?{startAfter:cursor}:{})});
     const expired=[...entries].filter(([,v])=>v.resetAt<=Date.now()).map(([k])=>k);
     if(expired.length)await this.state.storage.delete(expired);
     if(entries.size===1000){await this.state.storage.put('rateCleanupCursor',[...entries.keys()].at(-1));await this.state.storage.setAlarm(Date.now()+1000);}
     else{await this.state.storage.delete('rateCleanupCursor');await this.state.storage.setAlarm(Date.now()+86400000);}
-  }
+    if(publicationRetries.remaining)await this.state.storage.setAlarm(Date.now()+300000);
+  });}
 }
 async function control(env,body,name='hive'){return env.CONTROL.get(env.CONTROL.idFromName(name)).fetch('https://control/',{method:'POST',body:JSON.stringify(body)});}
 async function artifactPut(env,key,value){
+  const digest=await hash(value),existing=await env.ARTIFACTS.get(key);
+  if(existing&&(existing.customMetadata?.sha256===digest||await existing.text()===value))return {changed:false};
   const reservation=await control(env,{action:'storageReserve',key,bytes:new TextEncoder().encode(value).length},'storage-budget');
   if(!reservation.ok)throw new Error('Retained artifact budget exhausted');
-  await env.ARTIFACTS.put(key,value);
+  await env.ARTIFACTS.put(key,value,{customMetadata:{sha256:digest}});return {changed:true};
 }
 async function brokerControl(env,body){
   const status=await(await control(env,{action:'status'})).json();
@@ -277,7 +288,16 @@ export async function runPaperCycle(env){const state=await(await control(env,{ac
 export default {
   async fetch(request,env){
     const url=new URL(request.url);if(url.pathname==='/health')return json({service:'OmieBot runtime',mode:'paper',liveReady:false});
+    if(url.pathname==='/public/paper'&&request.method==='GET')return publicPaper(env,request);
     if(!env.EDGE_SERVICE_SECRET||request.headers.get('Authorization')!==`Bearer ${env.EDGE_SERVICE_SECRET}`)return json({error:'Unauthorized'},401);
+    if(url.pathname==='/control/cache'&&request.method==='POST'){
+      const text=await request.text();if(text.length>600000)return json({error:'Snapshot too large'},413);
+      let input;try{input=JSON.parse(text);}catch{return json({error:'Invalid JSON'},400);}
+      return control(env,{action:'dataPlane',input},'bulk-data-plane');
+    }
+    if(url.pathname==='/control/retry'&&request.method==='POST')return control(env,{action:'retryPublications'},'bulk-data-plane');
+    if(url.pathname==='/control/publish-paper'&&request.method==='POST')return publishPaper(env);
+    if(url.pathname==='/control/status')return control(env,{action:'publicationStatus'},'bulk-data-plane');
     if(url.pathname==='/workspaces/live')return json(await okxLiveAccount(env));
     if(url.pathname==='/workspaces/okx'&&request.method==='POST'){
       const text=await request.text();if(text.length>4000)return json({error:'Connection request too large'},413);
@@ -292,10 +312,10 @@ export default {
     }
     if(url.pathname==='/admin/paper/start'&&request.method==='POST'){
       await control(env,{action:'configure',paused:false,maxOrderUsd:25,providers:{alpaca:{enabled:true,retentionAllowed:true,redistributionAllowed:false}},bees:bees().filter(b=>b.executable).map(b=>({id:b.id,enabled:true}))},PAPER_ID);
-      return json(await paperCycle(env,control,artifactPut,{bootstrap:true}));
+      const result=await paperCycle(env,control,artifactPut,{bootstrap:true});await publishPaper(env);return json(result);
     }
     if(url.pathname==='/admin/paper/pause'&&request.method==='POST')return control(env,{action:'configure',paused:true},PAPER_ID);
-    if(url.pathname==='/admin/paper/cycle'&&request.method==='POST')return json(await paperCycle(env,control,artifactPut));
+    if(url.pathname==='/admin/paper/cycle'&&request.method==='POST'){const result=await paperCycle(env,control,artifactPut);await publishPaper(env);return json(result);}
     if(url.pathname==='/admin/paper/train'&&request.method==='POST'){
       const results=[];for(const bee of bees().filter(b=>b.executable)){const r=await control(env,{action:'train',bee:bee.id,workspace:PAPER_ID},`training:${PAPER_ID}:${bee.id}`);results.push({bee:bee.id,status:r.status,result:await r.json()});}return json({results});
     }
@@ -343,9 +363,17 @@ export default {
         }
       })());return;
     }
-    ctx.waitUntil(Promise.all([runPaperCycle(env),paperCycle(env,control,artifactPut)]));
+    ctx.waitUntil(Promise.all([runPaperCycle(env),(async()=>{await paperCycle(env,control,artifactPut);await publishPaper(env);})()]));
   }
 };
+async function publishPaper(env){
+  const d=await(await control(env,{action:'status'},PAPER_ID)).json();
+  const dataset=await env.ARTIFACTS.get(`datasets/${PAPER_ID}/manifest.json`),manifest=dataset?await dataset.json():null;
+  const lastDecisionAt=Math.max(0,...Object.values(d.paper||{}).map(a=>a.lastDecision?.at||0));
+  const lastCycle=d.lastCycle?{...d.lastCycle,at:lastDecisionAt?new Date(lastDecisionAt).toISOString():null}:null;
+  const value={workspace:PAPER_ID,symbol:SYMBOL,mode:'paper',config:{paused:d.config.paused,bees:d.config.bees},paper:d.paper,lastCycle,dataset:manifest?{provider:manifest.provider,symbol:manifest.symbol,bars:manifest.bars,firstBar:manifest.firstBar,lastBar:manifest.lastBar,sha256:manifest.sha256,sourceCoverage:manifest.sourceCoverage}:null,training:await workspaceTraining(env),liveReady:false};
+  return control(env,{action:'dataPlane',input:{operation:'publish',scope:'public-paper',owner:'public',key:'',value}},'bulk-data-plane');
+}
 async function workspaceTraining(env){
   const results=[];for(const bee of bees().filter(b=>b.executable)){const artifact=await env.ARTIFACTS.get(`training/${PAPER_ID}/${bee.id}/latest.json`);const value=artifact?await artifact.json():{status:'awaiting-data'};const {candidate,...result}=value;results.push({bee:bee.id,result});}
   return {results,cron:'0 3 * * *',timezone:'Africa/Lagos',mode:'paper-challengers',workspace:PAPER_ID};

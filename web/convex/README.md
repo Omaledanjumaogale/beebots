@@ -1,3 +1,5 @@
+> Updated 17 October 2026: the minute market loop described below is retired. Active paper ingestion and training run in Cloudflare. Private dashboards now use authenticated on-demand R2 snapshots; see [the migration report](../../docs/CONVEX-COST-MIGRATION.md). New evaluator reports must be R2 pointers, not bodies.
+
 # OmieBot AI Trading paper research backend
 
 Run `npm install` in `web`, then `npx convex dev` to provision a development deployment and generate bindings. Set `PUBLIC_CONVEX_URL` in the SvelteKit environment. Deploy functions with `npx convex deploy` separately from Cloudflare Pages. The minute cron runs on Convex infrastructure while the browser is closed; Cloudflare serves the web app. Convex deployment quotas still apply.

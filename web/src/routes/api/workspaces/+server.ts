@@ -10,7 +10,7 @@ export const GET:RequestHandler=async({url,cookies,platform,fetch})=>{
   if(view==='markets'&&user?.role!=='admin')throw error(403,'The configured market feed is currently available to the account operator. Customer feed entitlements are not configured.');
   if(!env.EDGE_RUNTIME_URL||!env.EDGE_SERVICE_SECRET)return json({error:'Workspace runtime unavailable'},{status:503});
   try{
-    const r=await fetch(`${env.EDGE_RUNTIME_URL}/workspaces/${view==='live'?'okx':view}`,{method:view==='live'?'POST':'GET',headers:{Authorization:`Bearer ${env.EDGE_SERVICE_SECRET}`},body:view==='live'?JSON.stringify({operation:'status',user:user!.sub}):undefined,signal:AbortSignal.timeout(30000)});
+    const r=await fetch(`${env.EDGE_RUNTIME_URL}/${view==='paper'?'public/paper':view==='live'?'workspaces/okx':'workspaces/markets'}`,{method:view==='live'?'POST':'GET',headers:{Authorization:`Bearer ${env.EDGE_SERVICE_SECRET}`},body:view==='live'?JSON.stringify({operation:'status',user:user!.sub}):undefined,signal:AbortSignal.timeout(30000)});
     const d=await r.json();
     if(view==='paper')return json({mode:'paper',workspace:d.workspace,symbol:d.symbol,paused:d.config?.paused??true,bots:d.config?.bees??[],paper:d.paper??{},lastCycle:d.lastCycle??null,dataset:d.dataset?{provider:d.dataset.provider,symbol:d.dataset.symbol,bars:d.dataset.bars,firstBar:d.dataset.firstBar,lastBar:d.dataset.lastBar,sha256:d.dataset.sha256,sourceCoverage:d.dataset.sourceCoverage}:null,training:d.training,capitalKind:'simulated',executionEnabled:false},{status:r.status,headers:{'Cache-Control':'no-store'}});
     return json(d,{status:r.status,headers:{'Cache-Control':'no-store'}});

@@ -1,0 +1,276 @@
+{
+  "date": "2026-10-17",
+  "status": "deployed; runtime acceptance blocked by shared Cloudflare daily quota",
+  "inventory": [
+    {
+      "table": "quotes",
+      "rows": 0,
+      "bytes": 2,
+      "capped": false
+    },
+    {
+      "table": "fills",
+      "rows": 0,
+      "bytes": 2,
+      "capped": false
+    },
+    {
+      "table": "evaluations",
+      "rows": 0,
+      "bytes": 2,
+      "capped": false
+    },
+    {
+      "table": "evidence",
+      "rows": 0,
+      "bytes": 2,
+      "capped": false
+    },
+    {
+      "table": "candidates",
+      "rows": 0,
+      "bytes": 2,
+      "capped": false
+    },
+    {
+      "table": "bees",
+      "rows": 0,
+      "bytes": 2,
+      "capped": false
+    },
+    {
+      "table": "portfolios",
+      "rows": 0,
+      "bytes": 2,
+      "capped": false
+    },
+    {
+      "table": "adminAudit",
+      "rows": 2,
+      "bytes": 453,
+      "capped": false
+    },
+    {
+      "table": "investmentJournal",
+      "rows": 1,
+      "bytes": 260,
+      "capped": false
+    },
+    {
+      "table": "investmentPositions",
+      "rows": 0,
+      "bytes": 2,
+      "capped": false
+    },
+    {
+      "table": "investmentWithdrawals",
+      "rows": 0,
+      "bytes": 2,
+      "capped": false
+    },
+    {
+      "table": "investorWallets",
+      "rows": 1,
+      "bytes": 226,
+      "capped": false
+    },
+    {
+      "table": "users",
+      "rows": 0,
+      "bytes": 2,
+      "capped": false
+    },
+    {
+      "table": "applications",
+      "rows": 0,
+      "bytes": 2,
+      "capped": false
+    },
+    {
+      "table": "referrals",
+      "rows": 0,
+      "bytes": 2,
+      "capped": false
+    },
+    {
+      "table": "financial",
+      "rows": 0,
+      "bytes": 2,
+      "capped": false
+    },
+    {
+      "table": "settings",
+      "rows": 1,
+      "bytes": 350,
+      "capped": false
+    },
+    {
+      "table": "_storage",
+      "rows": 0,
+      "bytes": 2,
+      "capped": false
+    }
+  ],
+  "replay": {
+    "at": "2026-10-17T18:32:48.897Z",
+    "boundary": "Real production Convex responses; local R2/DO adapter; production Cloudflare acceptance blocked by 1027",
+    "views": [
+      {
+        "scope": "admin-overview",
+        "reads": 10,
+        "oldSourceCalls": 10,
+        "sourceCalls": 1,
+        "oldSourceBytes": 6050,
+        "sourceBytes": 605,
+        "unchangedReplacements": 0,
+        "unchanged": true
+      },
+      {
+        "scope": "hive",
+        "reads": 10,
+        "oldSourceCalls": 10,
+        "sourceCalls": 1,
+        "oldSourceBytes": 840,
+        "sourceBytes": 84,
+        "unchangedReplacements": 0,
+        "unchanged": true
+      },
+      {
+        "scope": "investments",
+        "reads": 10,
+        "oldSourceCalls": 10,
+        "sourceCalls": 1,
+        "oldSourceBytes": 12950,
+        "sourceBytes": 1295,
+        "unchangedReplacements": 0,
+        "unchanged": true
+      }
+    ]
+  },
+  "productionDirectQueries": [
+    {
+      "path": "admin:overview",
+      "status": 200,
+      "success": true,
+      "bytes": 605
+    },
+    {
+      "path": "hive:dashboard",
+      "status": 200,
+      "success": true,
+      "bytes": 84
+    },
+    {
+      "path": "investments:dashboard",
+      "status": 200,
+      "success": true,
+      "bytes": 1295
+    }
+  ],
+  "productionProtectionChecks": [
+    {
+      "name": "anonymous-control",
+      "status": 404
+    },
+    {
+      "name": "member-admin",
+      "status": 404
+    },
+    {
+      "name": "anonymous-live",
+      "status": 404
+    },
+    {
+      "name": "member-markets",
+      "status": 404
+    }
+  ],
+  "productionPublicPreview": {
+    "status": 429,
+    "bytes": 5579,
+    "conditional": 429,
+    "storage": null
+  },
+  "r2Bucket": {
+    "name": "omiebot-retained-data",
+    "storageClass": "Standard",
+    "objects": 22,
+    "reportedSize": "915 kB",
+    "accountWideHeadroomVerified": false
+  },
+  "cloudflareDailyRequests": {
+    "omieRuntime": 387,
+    "twoOtherWorkersTotal": 84117,
+    "billingTotalVerified": false
+  },
+  "validation": {
+    "edgeTests": 29,
+    "webTests": 21,
+    "svelteErrors": 0,
+    "svelteWarnings": 0,
+    "build": "passed",
+    "convexTypeAndSchemaDeploy": "passed"
+  },
+  "retryQueue": "production state unverified while runtime is rate limited",
+  "r2Account": {
+    "standard": {
+      "objects": 726,
+      "payloadSize": 67875000,
+      "metadataSize": 24796
+    },
+    "currentBytesIncludingMetadata": 67899796,
+    "headroomAgainst10GB": 9932100204,
+    "operationRequestsSince20261001": 3872,
+    "operationBillingClassesNotReconciled": true
+  },
+  "staticPageAcceptance": [
+    {
+      "path": "/",
+      "status": 200,
+      "bytes": 14267,
+      "title": "OmieBot Trading \u00c2\u00b7 Meet your trading hive",
+      "cache": "DYNAMIC"
+    },
+    {
+      "path": "/paper",
+      "status": 200,
+      "bytes": 8587,
+      "title": "Paper Workspace \u00c2\u00b7 OmieBot Trading",
+      "cache": "DYNAMIC"
+    },
+    {
+      "path": "/live",
+      "status": 200,
+      "bytes": 8537,
+      "title": "Live Workspace \u00c2\u00b7 OmieBot Trading",
+      "cache": "DYNAMIC"
+    },
+    {
+      "path": "/admin",
+      "status": 200,
+      "bytes": 5209,
+      "title": "Operations console \u00c2\u00b7 OmieBot AI Trading",
+      "cache": "DYNAMIC"
+    },
+    {
+      "path": "/invest",
+      "status": 200,
+      "bytes": 3511,
+      "title": "Trading capital workspace \u00c2\u00b7 OmieBot AI Trading",
+      "cache": "DYNAMIC"
+    },
+    {
+      "path": "/research",
+      "status": 200,
+      "bytes": 12235,
+      "title": "Research lab \u00c2\u00b7 OmieBot AI Trading",
+      "cache": "DYNAMIC"
+    },
+    {
+      "path": "/api/health",
+      "status": 404,
+      "bytes": 9,
+      "cache": "DYNAMIC"
+    }
+  ]
+}

@@ -4,4 +4,4 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 // avoiding an unnecessary workerd emulator for the ordinary Vite preview.
 const cloudflare = adapter();
 delete cloudflare.emulate;
-export default { preprocess: vitePreprocess(), kit: { adapter: cloudflare } };
+export default { preprocess: vitePreprocess(), kit: { adapter: cloudflare, prerender: { crawl: false, entries: ['/', '/terminal', '/paper', '/live', '/hive', '/research', '/invest', '/invest/terms', '/admin', '/login', '/connect/okx'] } } };
