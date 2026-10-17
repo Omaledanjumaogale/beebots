@@ -9,7 +9,8 @@ assert.equal(bees().length,20);assert.equal(bees().filter(b=>b.executable).lengt
 assert.equal(marketOpen('forex',new Date('2026-10-17T12:00:00Z')),false);
 assert.equal(validateMarket('okx','https://evil.test','BTC-USDT'),false);
 assert.equal(trainCandidate([]).status,'skipped');
-assert.equal(trainCandidate(Array.from({length:1200},(_,i)=>({time:i,close:100}))).status,'rejected');
+assert.equal(trainCandidate(Array.from({length:1200},(_,i)=>({time:i*300000,close:100}))).status,'rejected');
+assert.equal(trainCandidate(Array.from({length:1200},(_,i)=>({time:i,close:100}))).status,'skipped');
 assert.equal((await call({action:'configure',mode:'live'})).status,409);
 assert.equal((await call({action:'reserve',provider:'marketstack'})).status,403);
 await call({action:'configure',providers:{marketstack:{enabled:true}}});
