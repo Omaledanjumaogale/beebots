@@ -24,6 +24,12 @@ Full-batch deterministic gradient descent fits logistic weights with L2 regulari
 
 Dataset bytes and worker source get SHA256 hashes; artifact records git revision, Python version, parameters and UTC time. The final artifact hash prints after creation. Deterministic training makes model parameters reproducible; creation timestamps and absolute dataset paths mean complete JSON bytes vary across runs. Outputs use exclusive creation to preserve prior results. Save the CSV, source revision and artifact together. No output silently promotes a Convex candidate, activates a Bee or changes risk limits.
 
+## Fixed candidate tournament
+
+`tournament.py` adds a bounded comparison inspired by the reviewed Qlib, Jesse and execution-engine workflows. It is original OmieBot code, with no upstream engine dependency. Run `python tournament.py --csv datasets/licensed.csv --source "Actual provider and instrument" --rights "Actual training/retention rights basis" --out experiments/new-tournament.json`.
+
+Five fixed candidates compete: three simplified long/cash baselines and two thresholds on the existing logistic model. Training uses the first 60%, selection uses the following 20% at the highest declared cost stress, and only the selected candidate consumes the final 20% holdout. Label overlap is purged. Default round-trip costs are 20, 40 and 80 basis points. Reports record abstention, entries, return/drawdown proxies, buy-and-hold, trial count, source and dataset/code hashes. These simplified baselines are not identical to the production position/stop logic. No output activates execution. Preserve consumed holdouts and obtain a new untouched release period after reviewing results.
+
 ## Recurring research batches
 
 `run-batch.ps1` is an **unscheduled deployment template**. Run it on a separate always-on worker after configuring dataset rights and permitted source. It writes immutable timestamped datasets/artifacts, uses a lock directory to prevent concurrent runs, and exits on failure. A deployment operator can use their own scheduler (for example Windows Task Scheduler daily) after confirming capacity and data permissions. Nothing in this repository installs a task or automation. Convex's paper cron is separate and does not run this Python process.

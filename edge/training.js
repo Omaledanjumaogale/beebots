@@ -1,7 +1,10 @@
 const sigmoid=x=>1/(1+Math.exp(-Math.max(-30,Math.min(30,x))));
 export function trainCandidate(bars, incumbent=null) {
-  const ordered=[...bars].filter(b=>Number.isFinite(b.close)&&b.close>0&&Number.isFinite(b.time)).sort((a,b)=>a.time-b.time);
+  if(!Array.isArray(bars)||bars.some(b=>!Number.isFinite(b.close)||b.close<=0||!Number.isFinite(b.time)))return {status:'skipped',reason:'invalid prices or timestamps'};
+  const ordered=[...bars];
   if (ordered.some((b,i)=>i>0&&b.time===ordered[i-1].time)) return {status:'skipped',reason:'duplicate timestamps'};
+  if(ordered.some((b,i)=>i>0&&b.time-ordered[i-1].time!==300000))return {status:'skipped',reason:'requires ordered gap-free five-minute bars'};
+  if(ordered.some(b=>b.time>Date.now()-300000))return {status:'skipped',reason:'unclosed bars'};
   if (ordered.length<1200) return {status:'skipped',reason:'requires 1200 closed chronological bars'};
   const rows=[];
   for(let i=20;i<ordered.length-1;i++) {
@@ -23,12 +26,13 @@ export function trainCandidate(bars, incumbent=null) {
       const x=[1,...r.x.map((v,j)=>(v-model.mean[j])/model.sd[j])];
       const p=sigmoid(model.weights.reduce((s,a,j)=>s+a*x[j],0));
       loss+=(p-r.y)**2;
-      if(p>.6||p<.4){net+=(p>.6?1:-1)*r.r-.004;trades++;}
+      if(p>.6){net+=r.r-.004;trades++;}
     }
     return {brier:loss/test.length,netReturn:net,trades,samples:test.length};
   };
   const candidate={weights:w,mean,sd,type:'logistic-return-v1'}, metrics=score(candidate);
-  const baseline=incumbent?score(incumbent):{brier:.25,netReturn:0};
+  const prevalence=train.reduce((s,r)=>s+r.y,0)/train.length;
+  const baseline={brier:test.reduce((s,r)=>s+(prevalence-r.y)**2,0)/test.length,netReturn:0};
   const promote=metrics.trades>=30&&metrics.brier<baseline.brier-.005&&metrics.netReturn>Math.max(0,baseline.netReturn)+.01;
-  return {status:promote?'shadow-ready':'rejected',candidate,metrics,baseline,reason:'Chronological 70/30 split, one-bar purge, train-only scaler, 40bp round-trip fee/slippage cost; forward-paper validation required before activation'};
+  return {status:promote?'shadow-ready':'rejected',candidate,metrics,baseline,executionApproved:false,evaluation:'development-screen-only',reason:'Chronological 70/30 development split, one-bar purge, train-only scaler and prevalence baseline, long/cash only, 40bp round-trip cost. Reused holdout is not release evidence; independent final holdout and forward-paper validation required before activation'};
 }

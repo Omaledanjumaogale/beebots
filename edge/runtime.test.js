@@ -8,7 +8,14 @@ describe('edge safety contracts',()=>{
   it('never treats weekend forex as open',()=>{expect(marketOpen('forex',new Date('2026-10-17T12:00:00Z'))).toBe(false);expect(marketOpen('crypto',new Date('2026-10-17T12:00:00Z'))).toBe(true);});
   it('rejects arbitrary URL endpoints and symbols',()=>{expect(validateMarket('twelvedata','https://evil.test','BTC/USD')).toBe(false);expect(validateMarket('twelvedata','price','BTC/USD')).toBe(true);});
   it('skips incomplete and duplicated training datasets',()=>{expect(trainCandidate([]).status).toBe('skipped');expect(trainCandidate([{time:1,close:1},{time:1,close:2}]).reason).toContain('duplicate');});
-  it('does not promote a flat-price candidate',()=>{const result=trainCandidate(Array.from({length:1200},(_,i)=>({time:i,close:100})));expect(result.status).toBe('rejected');expect(result.metrics.netReturn).toBeLessThan(0);});
+  it('does not promote a flat-price candidate or invent short trades',()=>{const result=trainCandidate(Array.from({length:1200},(_,i)=>({time:i*300000,close:100})));expect(result.status).toBe('rejected');expect(result.metrics.netReturn).toBe(0);expect(result.metrics.trades).toBe(0);expect(result.executionApproved).toBe(false);});
+  it('rejects invalid prices, reversed bars, gaps and future training bars',()=>{
+    const bars=Array.from({length:1200},(_,i)=>({time:i*300000,close:100}));
+    expect(trainCandidate(bars.map((b,i)=>i===10?{...b,close:NaN}:b)).status).toBe('skipped');
+    expect(trainCandidate([...bars].reverse()).status).toBe('skipped');
+    expect(trainCandidate(bars.filter((_,i)=>i!==30)).status).toBe('skipped');
+    expect(trainCandidate(bars.map((b,i)=>({...b,time:Date.now()+i*300000}))).status).toBe('skipped');
+  });
   it('rejects live mode and reserves requests before calls',async()=>{
     const c=new HiveControl(state(),{});const call=async body=>(await c.fetch(new Request('https://control/',{method:'POST',body:JSON.stringify(body)})));
     expect((await call({action:'configure',mode:'live'})).status).toBe(409);

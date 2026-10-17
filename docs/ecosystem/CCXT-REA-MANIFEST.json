@@ -1,0 +1,263 @@
+{
+  "package": "ccxt",
+  "version": "4.5.88",
+  "archive_sha256": "7297bc557b162bf6f851564ccf5ce0cbae92d41b0f3f2df03af48171a55523c3",
+  "rea_version": "6.4.0",
+  "analysis_evidence_id": "ev_a813a2bbb1470ca793d97abba40349b191e50a59678612fb66d813b933e96ba6",
+  "summary_evidence_id": "ev_7119cc491805d5c9cfbbbd0fbfecd47d7b52452a21caa3bde773fc58a95c317c",
+  "scope": "Unmodified packaged js/src/base subtree; not the complete CCXT release",
+  "static_only": true,
+  "statistics": {
+    "relevant_files": 60,
+    "nested_asar_containers": 0,
+    "text_bytes_read": 1168839,
+    "invalid_utf8_files": 0,
+    "parsed_javascript_files": 60,
+    "visited_ast_nodes": 112304,
+    "findings": 515,
+    "modules": 0,
+    "parse_failures": 0
+  },
+  "coverage": {
+    "application": {
+      "status": "partial",
+      "truncated": false,
+      "omitted_count": null,
+      "limits": [
+        {
+          "name": "javascript_analysis_parent_result_budget_bytes",
+          "value": 918513772,
+          "unit": "bytes"
+        },
+        {
+          "name": "javascript_analysis_semantic_result_budget_bytes",
+          "value": 0,
+          "unit": "bytes"
+        },
+        {
+          "name": "javascript_analysis_worker_heap_limit_bytes",
+          "value": 562036736,
+          "unit": "bytes"
+        },
+        {
+          "name": "javascript_analysis_worker_timeout_ms",
+          "value": 120000,
+          "unit": "milliseconds"
+        }
+      ]
+    },
+    "semantic": {
+      "status": "partial",
+      "truncated": true,
+      "omitted_nodes": null,
+      "omitted_relations": null,
+      "limits": [
+        {
+          "name": "javascript_analysis_parent_result_budget_bytes",
+          "value": 918513772,
+          "unit": "bytes"
+        },
+        {
+          "name": "javascript_analysis_semantic_result_budget_bytes",
+          "value": 0,
+          "unit": "bytes"
+        },
+        {
+          "name": "javascript_analysis_worker_heap_limit_bytes",
+          "value": 562036736,
+          "unit": "bytes"
+        },
+        {
+          "name": "javascript_analysis_worker_timeout_ms",
+          "value": 120000,
+          "unit": "milliseconds"
+        }
+      ],
+      "families": [
+        {
+          "family": "boundary",
+          "status": "partial",
+          "retained_relations": 4,
+          "omitted_relations": null,
+          "unknown_count": 49
+        },
+        {
+          "family": "call-flow",
+          "status": "partial",
+          "retained_relations": 74,
+          "omitted_relations": null,
+          "unknown_count": 874
+        },
+        {
+          "family": "child-process",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": null,
+          "unknown_count": 49
+        },
+        {
+          "family": "closure",
+          "status": "partial",
+          "retained_relations": 201,
+          "omitted_relations": null,
+          "unknown_count": 49
+        },
+        {
+          "family": "configuration",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": null,
+          "unknown_count": 49
+        },
+        {
+          "family": "data-flow",
+          "status": "partial",
+          "retained_relations": 8193,
+          "omitted_relations": null,
+          "unknown_count": 998
+        },
+        {
+          "family": "event",
+          "status": "partial",
+          "retained_relations": 4,
+          "omitted_relations": null,
+          "unknown_count": 53
+        },
+        {
+          "family": "object-flow",
+          "status": "partial",
+          "retained_relations": 484,
+          "omitted_relations": null,
+          "unknown_count": 1539
+        },
+        {
+          "family": "promise-ownership",
+          "status": "partial",
+          "retained_relations": 49,
+          "omitted_relations": null,
+          "unknown_count": 93
+        },
+        {
+          "family": "request",
+          "status": "partial",
+          "retained_relations": 2,
+          "omitted_relations": null,
+          "unknown_count": 50
+        },
+        {
+          "family": "resource-lifecycle",
+          "status": "partial",
+          "retained_relations": 0,
+          "omitted_relations": null,
+          "unknown_count": 49
+        },
+        {
+          "family": "timer",
+          "status": "partial",
+          "retained_relations": 5,
+          "omitted_relations": null,
+          "unknown_count": 49
+        }
+      ]
+    },
+    "application_unknowns": 89,
+    "semantic_unknowns": 3901
+  },
+  "limitations": [
+    "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+    "Exchange.js: Resource constraint during analyze_javascript_application: Semantic graph for Exchange.js exceeds the parent's remaining result budget; static and module facts were retained",
+    "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+    "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+    "PredictionExchange.js: Resource constraint during analyze_javascript_application: Semantic graph for PredictionExchange.js exceeds the parent's remaining result budget; static and module facts were retained",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/crypto.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/encode.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/generic.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/generic.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/io.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/misc.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/misc.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/msgpack.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/number.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/number.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/platform.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/platform.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/rsa.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/rsa.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/starknet.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/starknet.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/string.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/string.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/throttle.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/throttle.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/time.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/time.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/totp.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/totp.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/type.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for functions/type.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for types.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for types.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for ws/Cache.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for ws/Cache.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for ws/Client.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for ws/Client.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for ws/Future.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for ws/Future.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for ws/OrderBook.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for ws/OrderBook.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for ws/OrderBookSide.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for ws/OrderBookSide.js exceed the parent's result budget; complete static facts were retained on the file node",
+    "Resource constraint during analyze_javascript_application: Expanded application relationships for ws/WsClient.d.ts exceed the parent's result budget; complete static facts were retained on the file node",
+    "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+    "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+    "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code.",
+    "errors.js: Resource constraint during analyze_javascript_application: Semantic graph for errors.js exceeds the parent's remaining result budget; static and module facts were retained",
+    "functions.js: Resource constraint during analyze_javascript_application: functions.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions.js was not started",
+    "functions/crypto.d.ts: Resource constraint during analyze_javascript_application: Semantic graph for functions/crypto.d.ts exceeds the parent's remaining result budget; static and module facts were retained",
+    "functions/crypto.js: Resource constraint during analyze_javascript_application: functions/crypto.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/crypto.js was not started",
+    "functions/encode.d.ts: Resource constraint during analyze_javascript_application: Semantic graph for functions/encode.d.ts exceeds the parent's remaining result budget; static and module facts were retained",
+    "functions/encode.js: Resource constraint during analyze_javascript_application: functions/encode.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/encode.js was not started",
+    "functions/ethabi.d.ts: Resource constraint during analyze_javascript_application: Semantic graph for functions/ethabi.d.ts exceeds the parent's remaining result budget; static and module facts were retained",
+    "functions/ethabi.js: Resource constraint during analyze_javascript_application: Semantic graph for functions/ethabi.js exceeds the parent's remaining result budget; static and module facts were retained",
+    "functions/generic.d.ts: Resource constraint during analyze_javascript_application: functions/generic.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/generic.d.ts was not started",
+    "functions/generic.js: Resource constraint during analyze_javascript_application: functions/generic.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/generic.js was not started",
+    "functions/io.d.ts: Resource constraint during analyze_javascript_application: Semantic graph for functions/io.d.ts exceeds the parent's remaining result budget; static and module facts were retained",
+    "functions/io.js: Resource constraint during analyze_javascript_application: functions/io.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/io.js was not started",
+    "functions/misc.d.ts: Resource constraint during analyze_javascript_application: functions/misc.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/misc.d.ts was not started",
+    "functions/misc.js: Resource constraint during analyze_javascript_application: functions/misc.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/misc.js was not started",
+    "functions/msgpack.d.ts: Resource constraint during analyze_javascript_application: Semantic graph for functions/msgpack.d.ts exceeds the parent's remaining result budget; static and module facts were retained",
+    "functions/msgpack.js: Resource constraint during analyze_javascript_application: functions/msgpack.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/msgpack.js was not started",
+    "functions/number.d.ts: Resource constraint during analyze_javascript_application: functions/number.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/number.d.ts was not started",
+    "functions/number.js: Resource constraint during analyze_javascript_application: functions/number.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/number.js was not started",
+    "functions/platform.d.ts: Resource constraint during analyze_javascript_application: functions/platform.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/platform.d.ts was not started",
+    "functions/platform.js: Resource constraint during analyze_javascript_application: functions/platform.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/platform.js was not started",
+    "functions/rsa.d.ts: Resource constraint during analyze_javascript_application: functions/rsa.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/rsa.d.ts was not started",
+    "functions/rsa.js: Resource constraint during analyze_javascript_application: functions/rsa.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/rsa.js was not started",
+    "functions/starknet.d.ts: Resource constraint during analyze_javascript_application: functions/starknet.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/starknet.d.ts was not started",
+    "functions/starknet.js: Resource constraint during analyze_javascript_application: functions/starknet.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/starknet.js was not started",
+    "functions/string.d.ts: Resource constraint during analyze_javascript_application: functions/string.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/string.d.ts was not started",
+    "functions/string.js: Resource constraint during analyze_javascript_application: functions/string.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/string.js was not started",
+    "functions/throttle.d.ts: Resource constraint during analyze_javascript_application: functions/throttle.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/throttle.d.ts was not started",
+    "functions/throttle.js: Resource constraint during analyze_javascript_application: functions/throttle.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/throttle.js was not started",
+    "functions/time.d.ts: Resource constraint during analyze_javascript_application: functions/time.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/time.d.ts was not started",
+    "functions/time.js: Resource constraint during analyze_javascript_application: functions/time.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/time.js was not started",
+    "functions/totp.d.ts: Resource constraint during analyze_javascript_application: functions/totp.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/totp.d.ts was not started",
+    "functions/totp.js: Resource constraint during analyze_javascript_application: functions/totp.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/totp.js was not started",
+    "functions/type.d.ts: Resource constraint during analyze_javascript_application: functions/type.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/type.d.ts was not started",
+    "functions/type.js: Resource constraint during analyze_javascript_application: functions/type.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of functions/type.js was not started",
+    "types.d.ts: Resource constraint during analyze_javascript_application: types.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of types.d.ts was not started",
+    "types.js: Resource constraint during analyze_javascript_application: types.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of types.js was not started",
+    "ws/Cache.d.ts: Resource constraint during analyze_javascript_application: ws/Cache.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of ws/Cache.d.ts was not started",
+    "ws/Cache.js: Resource constraint during analyze_javascript_application: ws/Cache.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of ws/Cache.js was not started",
+    "ws/Client.d.ts: Resource constraint during analyze_javascript_application: ws/Client.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of ws/Client.d.ts was not started",
+    "ws/Client.js: Resource constraint during analyze_javascript_application: ws/Client.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of ws/Client.js was not started",
+    "ws/Future.d.ts: Resource constraint during analyze_javascript_application: ws/Future.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of ws/Future.d.ts was not started",
+    "ws/Future.js: Resource constraint during analyze_javascript_application: ws/Future.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of ws/Future.js was not started",
+    "ws/OrderBook.d.ts: Resource constraint during analyze_javascript_application: ws/OrderBook.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of ws/OrderBook.d.ts was not started",
+    "ws/OrderBook.js: Resource constraint during analyze_javascript_application: ws/OrderBook.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of ws/OrderBook.js was not started",
+    "ws/OrderBookSide.d.ts: Resource constraint during analyze_javascript_application: ws/OrderBookSide.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of ws/OrderBookSide.d.ts was not started",
+    "ws/OrderBookSide.js: Resource constraint during analyze_javascript_application: ws/OrderBookSide.js: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of ws/OrderBookSide.js was not started",
+    "ws/WsClient.d.ts: Resource constraint during analyze_javascript_application: ws/WsClient.d.ts: Resource constraint during analyze_javascript_application: The parent reserved its remaining result capacity for static observations; semantic analysis of ws/WsClient.d.ts was not started"
+  ]
+}
