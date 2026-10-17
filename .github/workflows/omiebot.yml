@@ -27,7 +27,7 @@ jobs:
       - run: npx tsc --noEmit --strict --target ES2022 --module ESNext --moduleResolution Bundler --skipLibCheck convex/*.ts
       - run: npm run build
       - name: Verify static routing and offline artifacts
-        run: node scripts/static-contract.mjs
+        run: node scripts/verify-offline.mjs
   runtime:
     runs-on: ubuntu-latest
     steps:

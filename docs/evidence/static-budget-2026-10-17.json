@@ -1,0 +1,226 @@
+{
+  "deployment": {
+    "at": "2026-10-17T19:16:58.825Z",
+    "base": "https://omiebot.ewinproject.org",
+    "checks": [
+      {
+        "path": "/",
+        "status": 200,
+        "static": true,
+        "pass": true
+      },
+      {
+        "path": "/terminal",
+        "status": 200,
+        "static": true,
+        "pass": true
+      },
+      {
+        "path": "/paper",
+        "status": 200,
+        "static": true,
+        "pass": true
+      },
+      {
+        "path": "/live",
+        "status": 200,
+        "static": true,
+        "pass": true
+      },
+      {
+        "path": "/hive",
+        "status": 200,
+        "static": true,
+        "pass": true
+      },
+      {
+        "path": "/research",
+        "status": 200,
+        "static": true,
+        "pass": true
+      },
+      {
+        "path": "/invest",
+        "status": 200,
+        "static": true,
+        "pass": true
+      },
+      {
+        "path": "/invest/terms",
+        "status": 200,
+        "static": true,
+        "pass": true
+      },
+      {
+        "path": "/admin",
+        "status": 200,
+        "static": true,
+        "pass": true
+      },
+      {
+        "path": "/login",
+        "status": 200,
+        "static": true,
+        "pass": true
+      },
+      {
+        "path": "/connect/okx",
+        "status": 200,
+        "static": true,
+        "pass": true
+      },
+      {
+        "path": "unknown public route",
+        "status": 404,
+        "pass": true
+      },
+      {
+        "path": "/api/control?view=admin-overview",
+        "status": 404,
+        "protected": true,
+        "pass": false
+      },
+      {
+        "path": "/api/workspaces?view=live",
+        "status": 404,
+        "protected": true,
+        "pass": false
+      },
+      {
+        "path": "/api/market?type=ticker&symbol=BTC-USDT",
+        "status": 404,
+        "protected": true,
+        "pass": false
+      },
+      {
+        "path": "/api/runtime/admin/status",
+        "status": 404,
+        "protected": true,
+        "pass": false
+      }
+    ]
+  },
+  "training": {
+    "at": "2026-10-17T18:58:05.760Z",
+    "runs": [
+      [
+        {
+          "scope": "legacy",
+          "bee": "drift",
+          "status": "skipped",
+          "writes": 2,
+          "samples": 631,
+          "datasetSha256": "b6f4821aa2d183eda95f3e0d15f3b36fde08dac1c236ce12ced2c493d19d2d2f"
+        },
+        {
+          "scope": "legacy",
+          "bee": "rebound",
+          "status": "skipped",
+          "writes": 2,
+          "samples": 631,
+          "datasetSha256": "b6f4821aa2d183eda95f3e0d15f3b36fde08dac1c236ce12ced2c493d19d2d2f"
+        },
+        {
+          "scope": "legacy",
+          "bee": "breaker",
+          "status": "skipped",
+          "writes": 2,
+          "samples": 631,
+          "datasetSha256": "b6f4821aa2d183eda95f3e0d15f3b36fde08dac1c236ce12ced2c493d19d2d2f"
+        },
+        {
+          "scope": "paper-alpaca-btc-usd-v1",
+          "bee": "drift",
+          "status": "rejected",
+          "writes": 2,
+          "samples": 1883,
+          "datasetSha256": "3eb9eebe9fc53c86e7e0ffc78a83efef6ad83a7bdb7a5bad72c2edc1c87c5415"
+        },
+        {
+          "scope": "paper-alpaca-btc-usd-v1",
+          "bee": "rebound",
+          "status": "rejected",
+          "writes": 2,
+          "samples": 1883,
+          "datasetSha256": "3eb9eebe9fc53c86e7e0ffc78a83efef6ad83a7bdb7a5bad72c2edc1c87c5415"
+        },
+        {
+          "scope": "paper-alpaca-btc-usd-v1",
+          "bee": "breaker",
+          "status": "rejected",
+          "writes": 2,
+          "samples": 1883,
+          "datasetSha256": "3eb9eebe9fc53c86e7e0ffc78a83efef6ad83a7bdb7a5bad72c2edc1c87c5415"
+        }
+      ],
+      [
+        {
+          "scope": "legacy",
+          "bee": "drift",
+          "status": "skipped",
+          "unchanged": true,
+          "writes": 0
+        },
+        {
+          "scope": "legacy",
+          "bee": "rebound",
+          "status": "skipped",
+          "unchanged": true,
+          "writes": 0
+        },
+        {
+          "scope": "legacy",
+          "bee": "breaker",
+          "status": "skipped",
+          "unchanged": true,
+          "writes": 0
+        },
+        {
+          "scope": "paper-alpaca-btc-usd-v1",
+          "bee": "drift",
+          "status": "rejected",
+          "unchanged": true,
+          "writes": 0
+        },
+        {
+          "scope": "paper-alpaca-btc-usd-v1",
+          "bee": "rebound",
+          "status": "rejected",
+          "unchanged": true,
+          "writes": 0
+        },
+        {
+          "scope": "paper-alpaca-btc-usd-v1",
+          "bee": "breaker",
+          "status": "rejected",
+          "unchanged": true,
+          "writes": 0
+        }
+      ]
+    ]
+  },
+  "validation": {
+    "webTests": 25,
+    "runtimeTests": 31,
+    "svelteErrors": 0,
+    "svelteWarnings": 0,
+    "staticShells": 11,
+    "offlineBundleContract": "passed; VM simulation, not physical browser",
+    "trainingWorkflow": "https://github.com/Omaledanjumaogale/beebots/actions/runs/39061637274",
+    "validationCI": "https://github.com/Omaledanjumaogale/beebots/actions/runs/39061655758"
+  },
+  "workerVersion": "002ad94b-4b8c-4006-a70f-42e64d47009c",
+  "pagesDeployment": "https://5d7bf068.omiebot-ai-trading.pages.dev",
+  "requestReduction": {
+    "pageRendering": "zero per static navigation by routing contract; no per-request invocation-log correlation",
+    "paperPollingPerVisibleHour": {
+      "before": 120,
+      "after": 12
+    },
+    "hivePollingPerVisibleHour": {
+      "before": 60,
+      "after": 12
+    },
+    "privateAutoRefresh": "opt-in; disabled by default"
+  }
+}

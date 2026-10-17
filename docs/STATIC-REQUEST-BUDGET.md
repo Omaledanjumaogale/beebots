@@ -25,7 +25,7 @@ Now:
 
 ## Offline and query handling
 
-The service worker caches only immutable build assets and public shells (`/`, `/paper`, `/hive`, `/research`, `/terminal`) plus `/offline.html`. API/discovery paths, POSTs, credentials, balances, private snapshots and private page shells are never intercepted or cached. Public navigations try the network first and fall back to a cached shell on failed requests. Old caches are removed on activation. A new visitor still needs a network connection for the first install. Physical-browser offline acceptance is pending because browser tools are disabled in this session.
+The service worker caches only immutable build assets and public shells (`/`, `/paper`, `/hive`, `/research`, `/terminal`) plus `/offline.html`. API/discovery paths, POSTs, credentials, balances, private snapshots and private page shells are never intercepted or cached. Public navigations try the network first and fall back to a cached shell on failed requests. Old caches are removed on activation. A new visitor still needs a network connection for the first install. The compiled service-worker VM contract passed public fallback and private/API/mutation exclusion checks. Physical-browser offline acceptance is pending because browser tools are disabled in this session.
 
 The terminal reads `symbol` and `bar` only inside `onMount`, using allowlists. Example: `/terminal?symbol=ETH-USDT&bar=1H`. Sign-in's `returnTo` is resolved after a successful explicit login and accepts only local paths; protocol-relative URLs and backslashes are rejected. There is no server query-dependent prerender state.
 
@@ -33,11 +33,13 @@ The terminal reads `symbol` and `bar` only inside `onMount`, using allowlists. E
 
 `edge/train-batch.mjs` reads bounded retained datasets through the Cloudflare R2 REST API, fits the existing numerical model outside Workers, and stores hash/revision-addressed reports plus latest pointers. Identical inputs and training revision produce no writes. It does not submit broker orders, promote models or publish raw datasets.
 
-The runner's account-level R2 Storage Read/Write token is separate from the deployment token and configured as GitHub secrets `OMIE_CF_ACCOUNT_ID` and `OMIE_R2_API_TOKEN`. The token can access account R2 storage; bucket-level permission tightening is a remaining credential improvement. No broker/Pages signing credentials are supplied to Actions. Workflow logs print only sample counts, status and hashes. Training is serialized and capped at ten minutes. The scheduled workflow must exist on the default branch; it checks out the production-equivalent branch explicitly so scheduling does not depend on merging the wider draft PR.
+The runner's account-level R2 Storage Read/Write token is separate from the deployment token and configured as GitHub secrets `OMIE_CF_ACCOUNT_ID` and `OMIE_R2_API_TOKEN`. The token can access account R2 storage; bucket-level permission tightening is a remaining credential improvement. No broker/Pages signing credentials are supplied to Actions. Workflow logs print only sample counts, status and hashes. The GitHub Actions run [39061637274](https://github.com/Omaledanjumaogale/beebots/actions/runs/39061637274) completed successfully. Training is serialized and capped at ten minutes. The scheduled workflow must exist on the default branch; it checks out the production-equivalent branch explicitly so scheduling does not depend on merging the wider draft PR.
 
 Actual external execution: first acceptance run used 1,883 retained Alpaca bars for three paper candidates, all rejected. Three older legacy datasets had 631 samples and were skipped. A second run made **zero writes across all six jobs**. A later run with the dedicated token read 1,885 Alpaca bars and wrote three updated rejected reports. These results do not establish profitability or live approval.
 
 ## Production verification and limits
+
+Local validation passed 31 runtime tests, 25 web tests, Svelte diagnostics with zero errors/warnings, the production build, the eleven-shell contract and compiled offline contract. GitHub runtime/research/terminal validation passed for the implementation.
 
 The deployed static check verified all 11 routes as HTTP 200 HTML with `X-Omie-Shell: static-v2`. An unknown public path returned HTTP 404 with “Service temporarily limited” and recovery navigation. Protected endpoint probes returned HTTP 404 during shared Cloudflare quota exhaustion, **not the expected 401**. The verifier exits nonzero for these failures. Local gateway tests prove owner/admin guards, but deployed authorization acceptance remains pending while Functions are unavailable.
 
