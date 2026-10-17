@@ -28,7 +28,7 @@ assert.equal(stopped.events[0].side,'sell');assert.equal(stopped.paper['drift:BT
 db.set('artifactBudget',{bytes:7999999999,objects:1});
 assert.equal((await call({action:'storageReserve',key:'datasets/drift.json',bytes:2})).status,429);
 const training=new HiveControl({blockConcurrencyWhile:f=>f(),storage:{get:async()=>undefined}},{ARTIFACTS:{get:async()=>({json:async()=>[{time:Date.now()+10000,close:100}]})}});
-assert.equal((await training.fetch(new Request('https://control/',{method:'POST',body:JSON.stringify({action:'train',bee:'drift'})}))).status,400);
+assert.equal((await training.fetch(new Request('https://control/',{method:'POST',body:JSON.stringify({action:'train',bee:'drift'})}))).status,409);
 const disabledEnv={EDGE_SERVICE_SECRET:'test',CONTROL:{idFromName:s=>s,get:()=>({fetch:async()=>Response.json({enabled:false})})},ARTIFACTS:{get:async()=>{throw new Error('Disabled cache must not be read');}}};
 assert.equal((await worker.fetch(new Request('https://edge/market?provider=okx&endpoint=ticker&symbol=BTC-USDT',{headers:{authorization:'Bearer test'}}),disabledEnv)).status,403);
 console.log('Edge checks passed:20 bees,3 baselines,market schedule,allowlist,training guards,live lock,quota,login limiter,paper entry/idempotency/stop.');
