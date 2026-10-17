@@ -41,6 +41,17 @@ export class HiveControl {
         return json({ok:true,bytes:next,cap:8000000000});
       }
       if(action==='train')return json({error:'Training runs only in the external scheduled runner',workflow:'omiebot-training.yml'},409);
+      if(action==='notificationStore'){
+        if(typeof data.owner!=='string'||data.owner.length>256)return json({error:'Invalid identity'},400);
+        const identity=await hash(data.owner),key=`private/notifications/${identity}.json`,object=await this.env.ARTIFACTS.get(key),rows=object?await object.json():[];
+        if(data.operation==='read'){
+          const rate=await this.state.storage.get('send:'+identity)||{count:0,day:0},day=Math.floor(Date.now()/86400000);if(rate.day===day&&rate.count>=5)return json({error:'Daily notification limit reached'},429);
+          await this.state.storage.put('send:'+identity,{day,count:rate.day===day?rate.count+1:1});return json(rows);
+        }
+        if(!['subscribe','unsubscribe'].includes(data.operation)||typeof data.subscription?.endpoint!=='string')return json({error:'Invalid subscription'},400);
+        const next=rows.filter(r=>r.endpoint!==data.subscription.endpoint);if(data.operation==='subscribe'){if(next.length>=3)return json({error:'Three device limit reached'},409);next.push(data.subscription);}
+        await artifactPut(this.env,key,JSON.stringify(next));return json({saved:true});
+      }
       if(action==='readBudget'){
         if(!/^[a-f0-9]{64}$/.test(data.key||''))return json({error:'Verified read identity required'},400);
         const now=Date.now(),minute=Math.floor(now/60000),day=Math.floor(now/86400000),key='rate:read:'+data.key;
@@ -279,6 +290,7 @@ export default {
     const url=new URL(request.url);if(url.pathname==='/health')return json({service:'OmieBot runtime',mode:'paper',liveReady:false});
     if(url.pathname==='/public/paper'&&request.method==='GET')return publicPaper(env,request);
     if(!env.EDGE_SERVICE_SECRET||request.headers.get('Authorization')!==`Bearer ${env.EDGE_SERVICE_SECRET}`)return json({error:'Unauthorized'},401);
+    if(url.pathname==='/notifications'&&request.method==='POST'){const text=await request.text();if(text.length>6000)return json({error:'Request too large'},413);return control(env,{...JSON.parse(text),action:'notificationStore'},'notification-registry');}
     const readKey=request.headers.get('X-Omie-Read-Key');
     if(readKey){const allowance=await control(env,{action:'readBudget',key:readKey},'private-read-budget');if(!allowance.ok)return allowance;}
     if(url.pathname==='/control/cache'&&request.method==='POST'){

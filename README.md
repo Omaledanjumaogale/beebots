@@ -20,7 +20,11 @@ Twenty specialist Bees are registered. Drift, Rebound and Breaker have executabl
 
 See `docs/PRODUCTION.md` and `docs/WORKSPACES-LIVE-PAPER.md` for schedules, costs, integration limits and acceptance status. The Alpaca-backed shared paper fleet evaluates actual closed BTC/USD bars every five minutes and fits retained-data shadow candidates daily at 04:00 Africa/Lagos. The first actual 1,819-bar fitting jobs were rejected and the first market tournament lost money; neither was promoted. `/live` reads only the signed-in profile's linked OKX records, with no fallback to paper balances. Connection verification, encrypted storage and recorded starting risk limits are implemented; actual live order submission and execution acceptance remain unfinished. An API key does not establish paid entitlements, data licenses or unlimited usage. Provider limits are shared outside this app; local counters cannot observe unrelated clients.
 
-## Validation
+## Public discovery and enterprise feedback
+
+The [AEO and enterprise implementation report](docs/AEO-ENTERPRISE-IMPLEMENTATION.md) documents the static discovery resources, server-rendered metadata/schema, E-WIN identity banner, reusable accessible content and feedback components, administrator workflows and explicit Web Push enrollment. The [complete source package](docs/IMPLEMENTATION-PACKAGE.md) reproduces the relevant current files. See [ecosystem discovery acceptance](docs/ECOSYSTEM-DISCOVERY-AUDIT.md) and [workflow acceptance](docs/WORKFLOW-ACCEPTANCE.md) for measured release boundaries. Search ranking, AI citations, physical-device push delivery and live trading are not established by these changes.
+
+## Validation commands
 
 From `web`: `npm run check`, `npm test`, `npm run build`. From repository root: `node edge/check.mjs`, `node web/node_modules/vitest/vitest.mjs run --config edge/vitest.config.js`, and `python -m unittest discover -s research-engine -v`.
 

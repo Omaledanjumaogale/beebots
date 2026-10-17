@@ -1,0 +1,6 @@
+import { CONTENT_UPDATED, publicPages, SITE } from '$lib/seo';
+import type { RequestHandler } from './$types';
+export const prerender = true;
+const escape = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+/** Feed describes editorial resources, never pretends to be a live order feed. */
+export const GET: RequestHandler = () => new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>OmieBot Trading public resources</title><link>${SITE}/</link><description>Paper trading documentation and research resources. Trading returns are not guaranteed.</description><language>en-NG</language><lastBuildDate>${new Date(`${CONTENT_UPDATED}T00:00:00Z`).toUTCString()}</lastBuildDate><atom:link href="${SITE}/rss.xml" rel="self" type="application/rss+xml"/>${publicPages.map(page => `<item><title>${escape(page.title)}</title><link>${SITE}${page.path}</link><guid isPermaLink="true">${SITE}${page.path}</guid><description>${escape(page.description)}</description></item>`).join('')}</channel></rss>`, { headers: { 'Content-Type': 'application/rss+xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600' } });

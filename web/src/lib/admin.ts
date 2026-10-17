@@ -1,10 +1,11 @@
+import {toasts} from '$lib/toast.svelte';
 import { ConvexClient } from 'convex/browser';
 import { makeFunctionReference } from 'convex/server';
 export const functionRef = (name:string) => makeFunctionReference<any>(name);
 export async function sessionRequest(path:string, options:RequestInit={}) {
  const response=await fetch(path,{credentials:'same-origin',...options});
  const data=await response.json().catch(()=>({}));
- if(!response.ok)throw new Error(data.error??data.message??`Request failed (${response.status})`);
+ if(!response.ok){const message=data.error??data.message??`Request failed (${response.status})`;toasts.show(message,'error');throw new Error(message);}
  return data;
 }
 export function authenticatedClient(url:string){
@@ -21,5 +22,6 @@ export async function controlQuery(view:string,args:Record<string,any>={}){
 }
 export async function controlMutation(name:string,args:Record<string,unknown>={}){
  const value=await sessionRequest('/api/control',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,args})});
+ toasts.show('The account action was recorded.','success');
  return value.result;
 }

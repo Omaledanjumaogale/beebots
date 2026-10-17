@@ -13,12 +13,18 @@
     "verify:deployment": "node scripts/verify-deployment.mjs"
   },
   "dependencies": {
+    "@block65/webcrypto-web-push": "^2.0.0",
     "@clerk/clerk-js": "^6.39.0",
+    "@internationalized/date": "^3.12.4",
     "@sveltejs/kit": "^2.48.0",
+    "bits-ui": "^2.19.5",
+    "clsx": "^2.1.1",
     "convex": "^1.28.0",
     "lightweight-charts": "^5.0.9",
     "lucide-svelte": "^0.468.0",
-    "svelte": "^5.43.0"
+    "svelte": "^5.43.0",
+    "tailwind-merge": "^3.7.0",
+    "tailwind-variants": "^3.3.1"
   },
   "devDependencies": {
     "@sveltejs/adapter-cloudflare": "^7.2.3",

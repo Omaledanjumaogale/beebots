@@ -1,0 +1,26 @@
+# Private access is enforced by authentication; these rules limit indexing only.
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: PerplexityBot
+User-agent: OAI-SearchBot
+User-agent: Google-Extended
+User-agent: Anthropic-AI
+User-agent: cohere-ai
+User-agent: YouBot
+User-agent: DuckAssistBot
+User-agent: Applebot-Extended
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /auth
+Disallow: /login
+Disallow: /dashboard
+Disallow: /terminal
+Disallow: /invest
+Disallow: /live
+Disallow: /connect/
+
+Sitemap: https://omiebot.ewinproject.org/sitemap.xml
+# The parent independently publishes and controls its own sitemap.
+Sitemap: https://ewinproject.org/sitemap.xml

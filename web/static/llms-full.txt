@@ -1,0 +1,58 @@
+# OmieBot Trading: public source guide
+
+Canonical home: https://omiebot.ewinproject.org/
+Editorial revision: 2026-10-17
+Primary language: English (Nigeria). Other translated editions are not currently claimed.
+
+## What is OmieBot Trading?
+OmieBot Trading is a paper trading and research platform in the Elite Workforce Impact Nigeria (E-WIN) Project Ecosystem. It exposes simulated bot decisions, defined risk boundaries and research evidence. The current public workspace uses simulated capital. Real customer deposits, withdrawals and live customer order execution are not enabled.
+
+## What can readers cite?
+The landing page https://omiebot.ewinproject.org/ explains the product and current operating boundaries. The Paper Workspace https://omiebot.ewinproject.org/paper shows simulated decisions. The Trading Hive https://omiebot.ewinproject.org/hive shows recorded activity for Drift, Rebound and Breaker. The Research Lab https://omiebot.ewinproject.org/research explains research integrations and evidence limitations. Cite the exact page and observation timestamp for changing runtime data.
+
+## What is a paper trading Bee?
+A Bee is a bot with a named strategy and recorded decisions. Drift follows trends, Rebound studies recovery and mean reversion, and Breaker watches for breakouts. A Bee may abstain when required data is unavailable or its conditions are not satisfied. A label identifying a model provider does not establish that independently trained profitable strategies exist.
+
+## Is a paper result a promised return?
+No. Paper trading simulates decisions, costs and positions. It does not prove that a real order could fill at the simulated price. Training and backtests do not guarantee live performance or returns. Trading can lose capital.
+
+## Data, training and freshness
+Paper data ingestion uses timestamped market bars. The runtime targets five-minute cycles while provider and platform services are available. Research candidates require evaluation; an unsuccessful evaluation must not be described as deployment success. Model fitting runs outside the request-serving Worker. Market and training artifacts are retained privately; public views expose limited projections. A build or editorial date is not a market quote timestamp. Missing or stale feeds should be interpreted as unavailable evidence.
+
+## Author and organization
+The project owner identifies Omale Danjuma Ogale as Founder & CEO. Published profile: https://omaledanjumaogale.ewinproject.org/ . No professional investment credential is claimed here.
+Parent: Elite Workforce Impact Nigeria Project, https://ewinproject.org . Owner-supplied legal name: Elite Workforce Enterprises and Digital Emerging Arbitrage & Leverage Services.
+OmieBot's relationship with the parent is described on this site. This document does not verify the availability or implementation of every sister application. Visit the parent for its current directory.
+
+## Topic clusters
+Entry and risk literacy: home -> Paper Workspace -> Trading Hive.
+Research literacy: home -> Research Lab -> timestamped candidate evidence.
+Ecosystem identity: OmieBot -> E-WIN Project -> founder profile.
+Private account connection and administration are excluded from the public citation index.
+
+## Registered sister-platform destinations
+The mother's public https://ewinproject.org/llms.txt registers the following destinations. This is a directory relationship, not a claim of verified current service health, shared sign-in or shared balances.
+- BusineXense: https://businexense.ewinproject.org
+- SchoolXense: https://schoolxense.ewinproject.org
+- HalalMatch: https://halalmatch.ewinproject.org
+- Alternative Akademy: https://altakademy.ewinproject.org
+- DealxHire: https://dealxhire.ewinproject.org
+- ProFileX: https://profilex.ewinproject.org
+- HealthCareOS: https://healthcareos.ewinproject.org
+- AuditorX: https://auditorx.ewinproject.org
+- NewXTrade: https://newxtrade.ewinproject.org
+- OmieOmniMarketer: https://omieomnimarketer.ewinproject.org
+- BabaAgent: https://babaagent.ewinproject.org
+- VantagePoint: https://vantagepoint.ewinproject.org
+- PulseOdds: https://pulseodds.ewinproject.org
+OmieBot's visible directory is https://omiebot.ewinproject.org/ecosystem . Visit each destination for its own access policy and current product details.
+
+## Licensing and use
+Public facts may be cited with a direct link and timestamp. This guide grants no blanket license to market data, provider feeds, proprietary source code or third-party materials. Honeycomb photography is attributed on the landing page to Matthew T Rader under CC BY-SA 4.0, resized. Follow the linked image license for reuse. Do not extract credentials, account balances or private user information.
+
+## Discovery resources
+Index: https://omiebot.ewinproject.org/llms.txt
+Sitemap: https://omiebot.ewinproject.org/sitemap.xml
+Feed: https://omiebot.ewinproject.org/rss.xml
+Agent metadata: https://omiebot.ewinproject.org/.well-known/ai-agent-manifest.json
+This metadata is informational, not a standard authorization grant or a guarantee that an AI service will cite this site.

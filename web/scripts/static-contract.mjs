@@ -12,8 +12,14 @@ for(const route of staticRoutes){
 const recovery=await readFile(new URL('../static/offline.html',import.meta.url),'utf8');
 await writeFile(new URL('404.html',root),recovery);
 await access(new URL('service-worker.js',root));
+for(const file of ['robots.txt','llms.txt','llms-full.txt','sitemap.xml','rss.xml','.well-known/ai-agent-manifest.json','images/omiebot-social.png'])await access(new URL(file,root));
+for(const route of ['/','/paper','/hive','/research','/ecosystem']){
+ const html=await readFile(new URL(route==='/'?'index.html':route.slice(1)+'.html',root),'utf8');
+ if((html.match(/application\/ld\+json/g)??[]).length!==1||!html.includes('rel="canonical"'))throw Error('Missing or duplicate server-rendered graph/canonical: '+route);
+}
 if(!recovery.includes('Service temporarily limited'))throw Error('Recovery page unavailable');
-const headers=staticRoutes.map(route=>`${route}\n  X-Omie-Shell: static-v2\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: DENY`).join('\n\n');
+const privateRoutes=new Set(['/admin','/invest','/invest/terms','/live','/login','/connect/okx','/terminal']);
+const headers=staticRoutes.map(route=>`${route}\n  X-Omie-Shell: static-v2\n  X-Robots-Tag: ${privateRoutes.has(route)?'noindex, nofollow, noarchive':'index, follow'}\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: DENY`).join('\n\n');
 // The adapter owns _routes.json; append only exact static-route headers.
 const headerPath=new URL('_headers',root),existing=await readFile(headerPath,'utf8').catch(()=>'');
 if(!existing.includes('X-Omie-Shell: static-v2'))await writeFile(headerPath,existing+'\n'+headers+'\n/service-worker.js\n  Cache-Control: no-cache\n');

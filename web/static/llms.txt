@@ -1,0 +1,32 @@
+# OmieBot Trading
+
+> OmieBot Trading is a paper trading and research platform under the Elite Workforce Impact Nigeria (E-WIN) Project Ecosystem. It helps people inspect trading bots called Bees, simulated decisions and research evidence. Live customer trading, real deposits and withdrawals are not enabled. Trading can lose money; simulated results do not guarantee returns.
+
+## Primary entities and topics
+- OmieBot Trading: simulated trading workspaces, trading Bees and model research.
+- Elite Workforce Impact Nigeria Project: the parent ecosystem.
+- Omale Danjuma Ogale: Founder & CEO, as identified by the project owner.
+- Drift, Rebound and Breaker: baseline paper trading Bees.
+
+## Public pages
+- [OmieBot Trading](https://omiebot.ewinproject.org/): product overview, paper mode and risk boundaries.
+- [Paper Workspace](https://omiebot.ewinproject.org/paper): timestamped simulated decisions and paper activity; the shell may remain available when data services fail.
+- [Trading Hive](https://omiebot.ewinproject.org/hive): recorded paper Bee decisions with freshness and abstention states.
+- [Research Lab](https://omiebot.ewinproject.org/research): research integrations and candidate evaluation evidence.
+- [E-WIN ecosystem directory](https://omiebot.ewinproject.org/ecosystem): parent and registered sister-platform destinations, with separate access and account boundaries.
+
+## Ecosystem and attribution
+- [E-WIN Project](https://ewinproject.org): mother application and ecosystem entry point.
+- [BusineXense](https://businexense.ewinproject.org): registered business platform destination.
+- [SchoolXense](https://schoolxense.ewinproject.org): registered education platform destination.
+- [HealthCareOS](https://healthcareos.ewinproject.org): registered healthcare platform destination.
+- [ProFileX](https://profilex.ewinproject.org): registered profile platform destination.
+- [Alternative Akademy](https://altakademy.ewinproject.org): registered academy platform destination.
+- [Omale Danjuma Ogale](https://omaledanjumaogale.ewinproject.org/): founder profile and attribution.
+- [Extended source notes](https://omiebot.ewinproject.org/llms-full.txt): detailed definitions and citation guidance.
+- [Public sitemap](https://omiebot.ewinproject.org/sitemap.xml): canonical public pages on this host.
+
+## Freshness and scope
+Editorial documentation updated 17 October 2026. Sister destinations are registered in the parent's public llms.txt; individual service health is not verified. Market observations carry their own timestamps; documentation dates do not establish live feed freshness. The runtime targets five-minute paper cycles while services and feeds are available. Private dashboards, accounts and credentials are not public sources. The parent and other platforms are independently operated; their current availability is not guaranteed here. No external crawler, search ranking or AI citation is guaranteed.
+
+Attribution: OmieBot Trading, part of the E-WIN Project Ecosystem. Use the founder profile above for the published contact channel; no private contact address is supplied.

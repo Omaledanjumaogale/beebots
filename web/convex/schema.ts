@@ -3,6 +3,7 @@ import { v } from 'convex/values';
 import {adminTables} from './adminSchema';
 import {investmentTables} from './investmentSchema';
 export default defineSchema({ ...adminTables,...investmentTables,
+  workflowJobs: defineTable({ owner:v.string(),kind:v.union(v.literal('training'),v.literal('verification'),v.literal('all')),status:v.union(v.literal('queued'),v.literal('running'),v.literal('succeeded'),v.literal('failed')),message:v.string(),createdAt:v.number(),updatedAt:v.number() }).index('owner_created',['owner','createdAt']),
   portfolios: defineTable({ owner: v.string(), cash: v.number(), killed: v.boolean(), createdAt: v.number() }).index('owner', ['owner']),
   bees: defineTable({ owner: v.string(), name: v.string(), strategy: v.string(), symbol: v.string(), active: v.boolean(), quantity: v.number(), lastDecision: v.optional(v.string()) }).index('owner', ['owner']).index('active', ['active']).index('active_symbol', ['active','symbol']),
   quotes: defineTable({ symbol: v.string(), bid: v.number(), ask: v.number(), sourceAt: v.number(), receivedAt: v.number(), source: v.string() }).index('symbol', ['symbol']),

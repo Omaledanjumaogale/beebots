@@ -1,0 +1,19 @@
+{
+ "name": "OmieBot Trading",
+ "url": "https://omiebot.ewinproject.org/",
+ "description": "Paper trading Bees, recorded decisions and research evidence within the E-WIN Project Ecosystem.",
+ "language": "en-NG",
+ "capabilities": ["public product documentation", "paper trading observation", "research evidence"],
+ "limitations": ["No live customer trading", "No guaranteed returns", "No authorization to access private accounts"],
+ "llms_txt": "https://omiebot.ewinproject.org/llms.txt",
+ "llms_full_txt": "https://omiebot.ewinproject.org/llms-full.txt",
+ "sitemap": "https://omiebot.ewinproject.org/sitemap.xml",
+ "rss": "https://omiebot.ewinproject.org/rss.xml",
+ "parent": {"name": "Elite Workforce Impact Nigeria Project", "url": "https://ewinproject.org"},
+ "ecosystem_directory": "https://omiebot.ewinproject.org/ecosystem",
+ "ecosystem_registry_source": "https://ewinproject.org/llms.txt",
+ "author": {"name": "Omale Danjuma Ogale", "role": "Founder & CEO", "url": "https://omaledanjumaogale.ewinproject.org/"},
+ "contact": {"url": "https://omaledanjumaogale.ewinproject.org/"},
+ "editorial_updated": "2026-10-17",
+ "notice": "Informational discovery metadata, not an authorization or an adopted universal agent manifest standard."
+}

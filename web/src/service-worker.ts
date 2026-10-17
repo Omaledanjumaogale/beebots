@@ -24,3 +24,9 @@ worker.addEventListener('fetch',event=>{
   })());
  }else if(build.includes(url.pathname))event.respondWith((async()=>await(await caches.open(name)).match(url.pathname)??fetch(request))());
 });
+
+worker.addEventListener('push',event=>{
+ let message:{title?:string;body?:string;url?:string}={};try{message=event.data?.json()??{};}catch{}
+ event.waitUntil(worker.registration.showNotification(message.title??'OmieBot update',{body:message.body??'Sign in to review your workflow status.',icon:'/favicon.svg',tag:'omiebot-workflow',data:{url:'/admin'}}));
+});
+worker.addEventListener('notificationclick',event=>{event.notification.close();event.waitUntil(worker.clients.openWindow('/admin'));});
