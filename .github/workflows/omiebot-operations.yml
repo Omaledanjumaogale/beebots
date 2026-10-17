@@ -1,0 +1,37 @@
+name: OmieBot administrator operations
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: Convex workflow job ID
+        required: true
+        type: string
+      kind:
+        description: Operation sequence
+        required: true
+        type: choice
+        options: [training, verification, all]
+permissions:
+  contents: read
+concurrency:
+  group: omiebot-administrator-operations
+  cancel-in-progress: false
+jobs:
+  operate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      OMIE_CF_ACCOUNT_ID: ${{ secrets.OMIE_CF_ACCOUNT_ID }}
+      OMIE_R2_API_TOKEN: ${{ secrets.OMIE_R2_API_TOKEN }}
+      OMIE_WORKFLOW_CALLBACK_SECRET: ${{ secrets.OMIE_WORKFLOW_CALLBACK_SECRET }}
+      OMIE_CONVEX_SITE_URL: ${{ secrets.OMIE_CONVEX_SITE_URL }}
+      OMIE_JOB_ID: ${{ inputs.job_id }}
+      OMIE_OPERATION: ${{ inputs.kind }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/production-omiebot
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/run-operations.mjs
