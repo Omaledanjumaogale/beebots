@@ -1,3 +1,4 @@
+import {readHeaders} from '$lib/server/read-budget';
 import {json,error} from '@sveltejs/kit';
 import {ConvexHttpClient} from 'convex/browser';
 import {makeFunctionReference} from 'convex/server';
@@ -15,7 +16,7 @@ export const GET:RequestHandler=async({request,url,cookies,platform,fetch})=>{
  const args:any={};if(view==='admin-list'){const section=url.searchParams.get('section');if(!sections.has(section??''))throw error(400,'Invalid section');const cursor=url.searchParams.get('cursor');if((cursor?.length??0)>8000)throw error(400,'Invalid cursor');args.section=section;args.paginationOpts={numItems:25,cursor:cursor||null};}
  if(!env.EDGE_RUNTIME_URL||!env.EDGE_SERVICE_SECRET||!PUBLIC_CONVEX_URL)throw error(503,'Control data plane unavailable');
  const identity={scope:view,owner:view.startsWith('admin-')?'admin':user.sub,key:JSON.stringify(args)};
- const edge=async(body:any)=>{const r=await fetch(env.EDGE_RUNTIME_URL+'/control/cache',{method:'POST',headers:{Authorization:`Bearer ${env.EDGE_SERVICE_SECRET}`,'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(15000)});const d=await r.json();if(!r.ok)throw error(503,'R2 control snapshot unavailable; bulk source fallback stopped');return d;};
+ const edge=async(body:any)=>{const r=await fetch(env.EDGE_RUNTIME_URL+'/control/cache',{method:'POST',headers:{...(body.operation==='get'?await readHeaders(env,user):{Authorization:`Bearer ${env.EDGE_SERVICE_SECRET}`}),'Content-Type':'application/json'},body:JSON.stringify(body),signal:AbortSignal.timeout(15000)});const d=await r.json();if(!r.ok)throw error(503,'R2 control snapshot unavailable; bulk source fallback stopped');return d;};
  const cached=await edge({...identity,operation:'get'});
  if(cached.hit)return json(cached.value,{headers:{'Cache-Control':'private, no-store','X-Control-Cache':'hit','X-Convex-Source-Calls':'0','X-Snapshot-Hash':cached.hash}});
  const client=new ConvexHttpClient(PUBLIC_CONVEX_URL);client.setAuth(await signToken(env,user));

@@ -5,7 +5,7 @@
   "durable_objects": { "bindings": [{ "name": "CONTROL", "class_name": "HiveControl" }] },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["HiveControl"] }],
   "r2_buckets": [{ "binding": "ARTIFACTS", "bucket_name": "omiebot-retained-data" }],
-  "triggers": { "crons": ["0 3 * * *", "*/5 * * * *"] },
+  "triggers": { "crons": ["*/5 * * * *"] },
   "observability": { "enabled": true },
   "vars": { "ALPACA_ENDPOINT": "https://paper-api.alpaca.markets/v2" }
 }

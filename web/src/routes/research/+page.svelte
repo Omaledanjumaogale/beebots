@@ -1,5 +1,6 @@
 <script lang="ts">
   import {onMount} from 'svelte';
+ import {budgetRead} from '$lib/request-budget';
   let evidence:any=$state(null),error=$state('');
   const sources=[
     ['TradingAgents','TauricResearch/TradingAgents','Agent debate and independent risk review','Apache-2.0'],
@@ -21,7 +22,7 @@
     ['vectorbt','polakowo/vectorbt','Bounded parameter comparison','Apache + Commons Clause'],
     ['StockSharp','StockSharp/StockSharp','Multi-asset workflow reference','Custom / proprietary']
   ];
-  onMount(async()=>{try{const r=await fetch('/api/research');if(!r.ok)throw Error('Recorded training reports are temporarily unavailable.');evidence=await r.json();}catch(e){error=e instanceof Error?e.message:String(e);}});
+  onMount(async()=>{try{evidence=await budgetRead('/api/research');}catch(e){error=e instanceof Error?e.message:String(e);}});
 </script>
 
 <svelte:head><title>Research lab · OmieBot AI Trading</title><meta name="description" content="Inspect OmieBot training evidence, validation gates and the trading research ecosystem."/></svelte:head>

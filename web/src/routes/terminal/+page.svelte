@@ -1,5 +1,6 @@
 <script lang="ts">
  import { onMount } from 'svelte';
+ import {terminalQuery} from '$lib/terminal-query';
  import { Hexagon, LayoutDashboard, ChartCandlestick, Bot, FlaskConical, Database, Settings2, ChevronDown, ArrowUpRight, ArrowDownRight, Search, Bell, Menu, X, ShieldCheck, Radio, Pause, Play, Download, Plus, ArrowRight, Activity, CircleHelp, SlidersHorizontal, Clock3, Wallet, Check, RefreshCw } from 'lucide-svelte';
  import MarketChart from '$lib/components/MarketChart.svelte';
  import CloudHive from '$lib/components/CloudHive.svelte';
@@ -10,7 +11,7 @@
  const money=(n:any,d=2)=>typeof n==='number'?n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}):'—';
  let chartRequest=0; async function chart(){const request=++chartRequest;const symbol=selected;const bar=timeframe;loading=true;try{const data=await fetchCandles(symbol,bar);if(request!==chartRequest)return;candles=data.candles;source=data.source;live=data.live;updated=new Date(data.time).toLocaleTimeString('en-GB');}catch(e){if(request===chartRequest)notice=String(e);}finally{if(request===chartRequest)loading=false;}}
  async function quotes(){try{markets=await fetchQuotes();}catch{notice='Public quotes unavailable. Paper execution requires a fresh quote.';}}
- onMount(()=>{account=loadPaper();chart();quotes();const timer=setInterval(()=>{quotes();chart();},60000);return()=>clearInterval(timer);});
+ onMount(()=>{account=loadPaper();const query=terminalQuery(location.search);selected=query.symbol;timeframe=query.bar;candles=previewCandles(selected,timeframe);loading=false;});
  async function selectMarket(symbol:string){selected=symbol;await chart();}
  async function order(){busy=true;notice='';try{account=await placePaperOrder(account,{symbol:selected,side,amount:Number(amount),beeId:selectedBee||undefined});notice='Paper order recorded. Your ledger has been updated.';}catch(e){notice=e instanceof Error?e.message:String(e);}finally{busy=false;}}
  async function closePosition(id:string){busy=true;try{account=await closePaperPosition(account,id);notice='Paper position closed.';}catch(e){notice=e instanceof Error?e.message:String(e);}finally{busy=false;}}

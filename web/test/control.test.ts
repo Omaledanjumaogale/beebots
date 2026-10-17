@@ -1,5 +1,6 @@
 import {beforeEach,describe,it,expect,vi} from 'vitest';
 const mocks=vi.hoisted(()=>({user:null as any,mutation:vi.fn(),query:vi.fn()}));
+vi.mock('$lib/server/read-budget',()=>({readHeaders:async()=>({Authorization:'Bearer test','X-Omie-Read-Key':'a'.repeat(64)})}));
 vi.mock('$env/static/public',()=>({PUBLIC_CONVEX_URL:'https://example.convex.cloud'}));
 vi.mock('$lib/server/auth',()=>({authEnv:()=>({EDGE_RUNTIME_URL:'https://edge.test',EDGE_SERVICE_SECRET:'test'}),verifyToken:async()=>mocks.user,signToken:async()=>'signed',sameOrigin:()=>true}));
 vi.mock('convex/browser',()=>({ConvexHttpClient:class{setAuth(){} query=mocks.query;mutation=mocks.mutation;}}));

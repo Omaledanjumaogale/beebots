@@ -24,6 +24,13 @@ describe('edge safety contracts',()=>{
     expect((await call({action:'reserve',provider:'marketstack'})).status).toBe(200);
     expect((await call({action:'reserve',provider:'marketstack'})).status).toBe(429);
   });
+  it('bounds private read bursts and refuses request-handler training',async()=>{
+    const store=state();store.storage.setAlarm=async()=>{};const c=new HiveControl(store,{});const call=body=>c.fetch(new Request('https://control/',{method:'POST',body:JSON.stringify(body)}));
+    for(let i=0;i<12;i++)expect((await call({action:'readBudget',key:'a'.repeat(64)})).status).toBe(200);
+    expect((await call({action:'readBudget',key:'a'.repeat(64)})).status).toBe(429);
+    expect((await call({action:'readBudget',key:'bad'})).status).toBe(400);
+    expect((await call({action:'train',bee:'drift'})).status).toBe(409);
+  });
   it('persists five login attempts then denies the sixth',async()=>{
     const c=new HiveControl(state(),{});const call=()=>c.fetch(new Request('https://control/',{method:'POST',body:JSON.stringify({action:'rate',key:'a'.repeat(64)})}));
     for(let i=0;i<5;i++)expect((await call()).status).toBe(200);

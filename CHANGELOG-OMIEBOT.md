@@ -1,5 +1,12 @@
 # OmieBot AI Trading
 
+## 0.1.2 — 2026-10-17
+
+- Restrict Functions routing to APIs/discovery; enforce eleven static shells and a useful recovery page at build and post-publish.
+- Add public-only offline caching, browser query initialization, request coalescing, visible polling, backoff and private read quotas.
+- Move numerical training out of Worker handlers into a direct-R2 external workflow; unchanged datasets create zero report writes.
+- Keep deployed private API acceptance explicit during shared Cloudflare quota exhaustion.
+
 ## 0.1.1 — 2026-10-17
 
 - Retire Convex market ingestion; add authenticated, content-addressed R2 dashboard snapshots with durable retry and bounded on-demand reads.

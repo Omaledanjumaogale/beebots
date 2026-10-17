@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "vite build",
+    "build": "vite build && node scripts/static-contract.mjs",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",
     "convex:dev": "convex dev",
-    "deploy": "npm run build && wrangler pages deploy .svelte-kit/cloudflare --project-name omiebot-ai-trading"
+    "deploy": "npm run build && wrangler pages deploy .svelte-kit/cloudflare --project-name omiebot-ai-trading && npm run verify:deployment",
+    "verify:deployment": "node scripts/verify-deployment.mjs"
   },
   "dependencies": {
     "@clerk/clerk-js": "^6.39.0",

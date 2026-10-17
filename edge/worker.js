@@ -1,5 +1,4 @@
 import {PROVIDERS,bees,buckets,marketOpen,validateMarket} from './policy.js';
-import {trainCandidate} from './training.js';
 import {PAPER_ID,DATA_KEY,SYMBOL,paperCycle,marketSnapshot} from './workspaces.js';
 import {okxLiveAccount} from './okx.js';
 import {brokerLink} from './broker-vault.js';
@@ -41,24 +40,14 @@ export class HiveControl {
         budget.bytes=next;if(!previous)budget.objects++;await this.state.storage.put({artifactBudget:budget,[key]:data.bytes});
         return json({ok:true,bytes:next,cap:8000000000});
       }
-      if(action==='train'){
-        if(!bees().some(b=>b.id===data.bee&&b.executable))return json({error:'Unknown executable bee'},400);
-        const namespace=data.workspace===PAPER_ID?`${PAPER_ID}/`:'';
-        const dataset=await this.env.ARTIFACTS.get(namespace?DATA_KEY:`datasets/${data.bee}.json`);if(!dataset){const report={status:'awaiting-data',at:new Date().toISOString(),reason:'No retained dataset; no provider requests made'};await artifactPut(this.env,`training/${namespace}${data.bee}/latest.json`,JSON.stringify(report));return json(report);}
-        const raw=await dataset.json();
-        if(!Array.isArray(raw)||raw.some(b=>!Number.isFinite(b.time)||b.time>Date.now()-300000))return json({status:'skipped',reason:'Unclosed or invalid data'},400);
-        const priorReport=await this.env.ARTIFACTS.get(`training/${namespace}${data.bee}/latest.json`);
-          const currentHash=await hash(JSON.stringify(raw.slice(-2000)));
-          if(priorReport){const prior=await priorReport.json();if(prior.datasetSha256===currentHash)return json({status:prior.status,unchanged:true,r2Replacements:0});}
-          const bars=raw.slice(-2000),previous=await this.env.ARTIFACTS.get(`models/${data.bee}/challenger.json`);
-        const result=trainCandidate(bars,previous?await previous.json():null);
-        const at=new Date().toISOString();
-        const datasetSha256=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(bars))))].map(n=>n.toString(16).padStart(2,'0')).join('');
-        const report={...result,at,compute:'isolated-durable-object',maxSamples:2000,epochs:10,workspace:namespace?PAPER_ID:'legacy-okx',samples:bars.length,firstBar:bars[0]?.time,lastBar:bars.at(-1)?.time,datasetSha256,executionApproved:false};
-        await artifactPut(this.env,`training/${namespace}${data.bee}/${at.replaceAll(':','-')}.json`,JSON.stringify(report));
-        await artifactPut(this.env,`training/${namespace}${data.bee}/latest.json`,JSON.stringify(report));
-        if(result.status==='shadow-ready'&&!namespace)await artifactPut(this.env,`models/${data.bee}/challenger.json`,JSON.stringify(result.candidate));
-        return json({status:result.status});
+      if(action==='train')return json({error:'Training runs only in the external scheduled runner',workflow:'omiebot-training.yml'},409);
+      if(action==='readBudget'){
+        if(!/^[a-f0-9]{64}$/.test(data.key||''))return json({error:'Verified read identity required'},400);
+        const now=Date.now(),minute=Math.floor(now/60000),day=Math.floor(now/86400000),key='rate:read:'+data.key;
+        const old=await this.state.storage.get(key),entry=old?.day===day?old:{day,count:0,minute,burst:0,resetAt:(day+1)*86400000};
+        if(entry.minute!==minute){entry.minute=minute;entry.burst=0;}
+        if(entry.count>=240||entry.burst>=12)return json({error:'Private read budget exhausted; wait before refreshing',retryAfter:entry.count>=240?Math.ceil((entry.resetAt-now)/1000):60},429);
+        entry.count++;entry.burst++;await this.state.storage.put(key,entry);await this.state.storage.setAlarm(entry.resetAt);return json({allowed:true});
       }
       if(action==='rate'){
         if(!/^[a-f0-9]{64}$/.test(data.key||''))return json({error:'Hashed rate key required'},400);
@@ -72,7 +61,7 @@ export class HiveControl {
         }
         return json({allowed:true,remaining:limit-entry.count});
       }
-      if(action==='status')return json({config,usage:await this.state.storage.get('usage')||{},paper:await this.state.storage.get('paper')||{},lastCycle:await this.state.storage.get('lastCycle')||null,liveReady:false,providers:Object.entries(PROVIDERS).map(([id,p])=>({id,configured:!p.key||!!this.env[p.key],enabled:!!config.providers[id]?.enabled,limits:{minute:p.minute,day:p.day,month:p.month,bytes30d:p.bytes30d},endpoints:p.endpoints})),training:{schedule:'0 3 * * *',localTime:'04:00 Africa/Lagos',activation:'shadow-only-until-forward-validation'}});
+      if(action==='status')return json({config,usage:await this.state.storage.get('usage')||{},paper:await this.state.storage.get('paper')||{},lastCycle:await this.state.storage.get('lastCycle')||null,liveReady:false,providers:Object.entries(PROVIDERS).map(([id,p])=>({id,configured:!p.key||!!this.env[p.key],enabled:!!config.providers[id]?.enabled,limits:{minute:p.minute,day:p.day,month:p.month,bytes30d:p.bytes30d},endpoints:p.endpoints})),training:{schedule:'GitHub Actions: 0 3 * * *',localTime:'04:00 Africa/Lagos · GitHub Actions',activation:'shadow-only-until-forward-validation'}});
       if(action==='configure'){
         if(data.mode && data.mode!=='paper')return json({error:'Live execution locked: separate live credentials and owner/account permission verification required'},409);
         if(data.feeds && (!Array.isArray(data.feeds)||data.feeds.length>3||data.feeds.some(f=>!validateMarket(f.provider,f.endpoint,f.symbol)||!['crypto','forex'].includes(f.assetClass))))return json({error:'Invalid feeds; maximum three'},400);
@@ -290,6 +279,8 @@ export default {
     const url=new URL(request.url);if(url.pathname==='/health')return json({service:'OmieBot runtime',mode:'paper',liveReady:false});
     if(url.pathname==='/public/paper'&&request.method==='GET')return publicPaper(env,request);
     if(!env.EDGE_SERVICE_SECRET||request.headers.get('Authorization')!==`Bearer ${env.EDGE_SERVICE_SECRET}`)return json({error:'Unauthorized'},401);
+    const readKey=request.headers.get('X-Omie-Read-Key');
+    if(readKey){const allowance=await control(env,{action:'readBudget',key:readKey},'private-read-budget');if(!allowance.ok)return allowance;}
     if(url.pathname==='/control/cache'&&request.method==='POST'){
       const text=await request.text();if(text.length>600000)return json({error:'Snapshot too large'},413);
       let input;try{input=JSON.parse(text);}catch{return json({error:'Invalid JSON'},400);}
@@ -316,9 +307,7 @@ export default {
     }
     if(url.pathname==='/admin/paper/pause'&&request.method==='POST')return control(env,{action:'configure',paused:true},PAPER_ID);
     if(url.pathname==='/admin/paper/cycle'&&request.method==='POST'){const result=await paperCycle(env,control,artifactPut);await publishPaper(env);return json(result);}
-    if(url.pathname==='/admin/paper/train'&&request.method==='POST'){
-      const results=[];for(const bee of bees().filter(b=>b.executable)){const r=await control(env,{action:'train',bee:bee.id,workspace:PAPER_ID},`training:${PAPER_ID}:${bee.id}`);results.push({bee:bee.id,status:r.status,result:await r.json()});}return json({results});
-    }
+    if(url.pathname==='/admin/paper/train'&&request.method==='POST')return json({error:'Training runs outside request handlers. Run the OmieBot retained-data training workflow.',workflow:'omiebot-training.yml'},409);
     if(url.pathname==='/admin/cycle'&&request.method==='POST')return json(await runPaperCycle(env));
     if(url.pathname==='/admin/status'){
       const status=await(await control(env,{action:'status'})).json();
@@ -354,15 +343,6 @@ export default {
     return json({error:'Not found'},404);
   },
   async scheduled(event,env,ctx){
-    if(event.cron==='0 3 * * *'){
-      ctx.waitUntil((async()=>{
-        // Only owner-imported closed bars. This path never calls market/LLM providers.
-        for(const bee of bees().filter(b=>b.executable)){
-          await control(env,{action:'train',bee:bee.id},`training:${bee.id}`);
-          await control(env,{action:'train',bee:bee.id,workspace:PAPER_ID},`training:${PAPER_ID}:${bee.id}`);
-        }
-      })());return;
-    }
     ctx.waitUntil(Promise.all([runPaperCycle(env),(async()=>{await paperCycle(env,control,artifactPut);await publishPaper(env);})()]));
   }
 };
