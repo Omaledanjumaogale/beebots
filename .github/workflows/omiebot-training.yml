@@ -1,0 +1,28 @@
+name: OmieBot retained-data training
+on:
+  push:
+    branches: [main, codex/production-omiebot]
+    paths: ['edge/training.js', 'edge/train-batch.mjs', '.github/workflows/omiebot-training.yml']
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: omiebot-retained-training
+  cancel-in-progress: false
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      OMIE_CF_ACCOUNT_ID: ${{ secrets.OMIE_CF_ACCOUNT_ID }}
+      OMIE_R2_API_TOKEN: ${{ secrets.OMIE_R2_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/production-omiebot
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node edge/train-batch.mjs
