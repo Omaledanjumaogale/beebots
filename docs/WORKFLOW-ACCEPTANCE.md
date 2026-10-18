@@ -12,6 +12,8 @@ The operations dispatcher runs retained-data training and deployment verificatio
 
 ## Execution acceptance
 
+Verified on 18 October 2026: authenticated training created job md7et24ka34gygn8375ddrb3sx8ghc7d. An immediate repeated start returned the same ID with existing=true. [GitHub run 39161372546](https://github.com/Omaledanjumaogale/beebots/actions/runs/39161372546) completed successfully; production Convex recorded succeeded and All requested stages completed. This verifies dispatch, runner execution and callback completion. It does not qualify a trading model or prove physical push receipt.
+
 Execution is checked by starting one training job through the production admin-guarded Convex mutation, observing its GitHub run, and reading the final callback state. Successful job orchestration does not establish model profitability, independent model performance or approval for live execution. Retained-data training reports remain shadow evidence.
 
 Sanitized operator evidence is saved outside the repository in `research/workflow-registration.json` and `research/workflow-acceptance.json` under the parent workspace. Credentials and signed JWTs are never written to these reports.

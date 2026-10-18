@@ -2,6 +2,8 @@
 
 Editorial release: 17 October 2026. This report covers the OmieBot source implementation and the separately verified E-WIN mother discovery patch. It does not certify every sister service, search ranking, AI citation, physical-device delivery or live trading execution. See [the full source package](IMPLEMENTATION-PACKAGE.md) for complete file contents and [the ecosystem audit](ECOSYSTEM-DISCOVERY-AUDIT.md) for point-in-time production evidence.
 
+Release evidence: OmieBot deployment b19fd341 served all five public discovery pages with one parseable JSON-LD graph and a canonical link each. The exact homepage banner, robots, llms/full, sitemap, RSS and manifest were verified over HTTP. The social PNG measured 1200 by 630 pixels; the admin shell returned noindex. Local suites passed 37 web and 36 runtime tests. On 18 October, authenticated workflow run 39161372546 succeeded and its callback completed in Convex; immediate duplicate starts returned the same job. Protected API checks previously failed during the shared Cloudflare quota outage, and an 18 October recheck encountered a connection timeout. Neither result establishes API recovery. Browser interaction, physical push receipt, translated content, Search Console submission, measured Core Web Vitals and sister-wide recovery remain unverified or incomplete.
+
 ## Section 1 — Technical configuration files
 
 Implemented `web/static/robots.txt`, `llms.txt`, `llms-full.txt` and `.well-known/ai-agent-manifest.json`. Named AI crawlers share public allow rules and private-route exclusions. Robots rules are indexing preferences; session and role checks enforce private access. The manifest is informational and is not a universal agent authorization standard.
@@ -57,6 +59,13 @@ Device notification enrollment is explicit and uses PushManager with VAPID. Subs
 5. **Enterprise:** verify administrator dispatch, callback authentication, terminal job evidence, push enrollment and private-data isolation. Expensive training remains outside requests and Convex.
 6. **Release:** run `npm run check`, `npm test`, `npm run build`, runtime checks and `npm run verify:deployment`. Run the compiled source/header/routing checks after build. HTTP static checks cannot replace authenticated APIs or interactive browser acceptance.
 7. **External acceptance:** submit the sitemap using authorized Search Console access; validate schema externally; measure mobile Lighthouse/PageSpeed, LCP, CLS and INP; inspect actual AI referral/citation behavior. These actions are not proved by source presence.
+
+For an existing checkout without the updated lockfile, the manifest additions are installed from `web` with the following exact command. Prefer `npm ci --legacy-peer-deps` when using this release's committed lockfile.
+
+```powershell
+# web/package.json dependency additions
+npm install --legacy-peer-deps "@block65/webcrypto-web-push@^2.0.0" "bits-ui@^2.19.5" "clsx@^2.1.1" "tailwind-merge@^3.7.0" "tailwind-variants@^3.3.1" "@internationalized/date@^3.12.4"
+```
 
 Copyable checklist:
 

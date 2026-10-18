@@ -9,7 +9,7 @@ Use Node 22.13 or newer. From `web`, run `npm ci --legacy-peer-deps`, `npm run d
 ## Application boundaries
 
 - `web/`: trading terminal, original OmieBot branding and Bee avatars, accessible responsive UI, browser-local paper ledger, signed session authentication, Convex cloud hive and operations console.
-- `web/convex/`: authenticated users/applications/referrals/settings management, immutable financial journal, audit trail and user-owned paper portfolios. Market polling is disabled by default to conserve Convex operations.
+- `web/convex/`: authenticated users/applications/referrals/settings management, immutable financial journal, audit trail, user-owned paper portfolios and bounded administrator workflow metadata. Legacy market ingestion is retired to conserve Convex operations.
 - `edge/`: authenticated runtime, globally serialized provider quota reservations, R2 retained datasets/artifacts, scheduled baseline paper strategies, broker paper adapter and daily shadow training.
 - `research-engine/`: independent offline Python walk-forward research and tests. It is distinct from the deployed JavaScript trainer.
 - `src/`, `dashboard/` and existing container configuration: preserved upstream engine and dashboard. These are not the Cloudflare application or production deployment path. See `docs/UPSTREAM-README.md` and LICENSE for upstream attribution.
