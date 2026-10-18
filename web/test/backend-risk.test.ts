@@ -1,0 +1,9 @@
+import { describe,it,expect } from 'vitest';
+import { quoteSafe,signal,nextState,contiguousPrices } from '../convex/risk';
+describe('paper risk boundaries',()=>{
+  it('resets signal warmup after feed gaps',()=>{const quotes=Array.from({length:35},(_,index)=>({bid:100,ask:100.1,sourceAt:index*60000}));quotes.push({bid:101,ask:101.1,sourceAt:40*60000});expect(contiguousPrices(quotes)).toHaveLength(1);expect(signal('trend',contiguousPrices(quotes))).toBe('hold');});
+  it('rejects non-finite or fractional evaluation counts',()=>{const e={report:'Long verified report with manifest and evaluation evidence',independentSamples:100,durationDays:30,passed:true};for(const value of [NaN,Infinity,100.5,-1])expect(()=>nextState('registered','evaluated',{...e,independentSamples:value})).toThrow();for(const value of [NaN,Infinity,-1])expect(()=>nextState('registered','evaluated',{...e,durationDays:value})).toThrow();});
+  it('rejects stale crossed future and wide markets',()=>{expect(quoteSafe(100,100.1,1000,2000)).toBe(true);expect(quoteSafe(100,101,1000,2000)).toBe(false);expect(quoteSafe(101,100,1000,2000)).toBe(false);expect(quoteSafe(100,100.1,0,20000)).toBe(false);expect(quoteSafe(100,100.1,5000,2000)).toBe(false);});
+  it('abstains without history or an implemented strategy',()=>{expect(signal('trend',[100])).toBe('hold');expect(signal('research',Array(30).fill(100))).toBe('hold');expect(signal('trend',[...Array(29).fill(100),102])).toBe('buy');});
+  it('cannot skip lifecycle stages or approve short trials',()=>{const e={report:'Reproducible report artifact with chronological holdout and cost evidence',independentSamples:100,durationDays:30,passed:true};expect(nextState('registered','evaluated',e)).toBe('evaluated');expect(()=>nextState('registered','approved',e)).toThrow();expect(()=>nextState('paper','approved',{...e,durationDays:2})).toThrow();expect(()=>nextState('registered','evaluated',{...e,passed:false})).toThrow();});
+});

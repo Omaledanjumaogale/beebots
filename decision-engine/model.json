@@ -1,0 +1,7 @@
+{
+  "repo": "receptron/laya-onnx",
+  "revision": "68f27dfe5a27a54fb2b1fefc432f43f972e90868",
+  "runtime": "@receptron/laya@0.1.2",
+  "status": "pretrained-unvalidated",
+  "execution": "shadow-only"
+}

@@ -1,3 +1,5 @@
+> OmieBot production platform cost changes and verified limits are documented in [CONVEX-COST-MIGRATION.md](CONVEX-COST-MIGRATION.md). The upstream engine estimates below are historical and do not describe the deployed paper platform.
+
 # Cost model (measured and read 2026-09-24)
 
 Stake: **$1,000**, split **$333** per bee. Max notional per bee at 2x: **~$666**.

@@ -1,0 +1,4 @@
+name = "omiebot-ai-trading"
+pages_build_output_dir = ".svelte-kit/cloudflare"
+compatibility_date = "2026-10-15"
+compatibility_flags = ["nodejs_compat"]

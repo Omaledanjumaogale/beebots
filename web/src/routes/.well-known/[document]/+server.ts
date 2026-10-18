@@ -1,0 +1,4 @@
+import {json} from '@sveltejs/kit';
+import type {RequestHandler} from './$types';
+import {authEnv} from '$lib/server/auth';
+export const GET:RequestHandler=({params,platform})=>{const env=authEnv(platform);const issuer=env.AUTH_ISSUER||'https://omiebot.ewinproject.org';if(params.document==='openid-configuration')return json({issuer,jwks_uri:`${issuer}/.well-known/jwks.json`,response_types_supported:['id_token'],subject_types_supported:['public'],id_token_signing_alg_values_supported:['RS256']});if(params.document==='jwks.json'&&env.AUTH_PUBLIC_JWK){const key=JSON.parse(env.AUTH_PUBLIC_JWK);delete key.d;delete key.p;delete key.q;delete key.dp;delete key.dq;delete key.qi;return json({keys:[{...key,kid:key.kid||'omiebot-1',use:'sig',alg:'RS256'}]},{headers:{'cache-control':'public,max-age=300'}});}return json({error:'Not found'},{status:404});};
