@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "platformId": "omiebot",
+  "repository": "Omaledanjumaogale/beebots",
+  "policyVersion": "naira-v3.1",
+  "moneyAuthority": "ewin-hub",
+  "currency": "NGN",
+  "amountUnit": "kobo",
+  "sdk": {
+    "path": "packages/ewin-wallet-sdk/index.ts",
+    "sha256": "eed9e4a7dcb584eb68aaf6f85d6d59edcfc8ff07ac5c42f5cde68d08555abb41"
+  },
+  "rollout": {
+    "status": "mapped",
+    "nativeCheckoutEnabled": false
+  },
+  "sharedModules": {
+    "wallet": {
+      "url": "https://ewinproject.org/wallet",
+      "implementation": "hub"
+    },
+    "bounties": {
+      "url": "https://ewinproject.org/bounties",
+      "implementation": "hub"
+    },
+    "squads": {
+      "url": "https://ewinproject.org/squads",
+      "implementation": "hub"
+    }
+  },
+  "legacyFinancialSources": [],
+  "migration": {
+    "backupVerified": false,
+    "ownershipVerified": false,
+    "sourceSettlementsFrozen": false,
+    "reconciled": false,
+    "credited": false
+  },
+  "billableActions": []
+}
